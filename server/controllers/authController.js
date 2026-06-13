@@ -4,7 +4,7 @@ const generateToken = require("../utils/generateToken");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-const ADMIN_EMAILS = ["tnp.nits@gmail.com", "tnp.nits.2027@gmail.com"];
+const ADMIN_EMAILS = ["sekai.kerai@gmail.com"];
 
 const googleLogin = async (req, res) => {
   try {

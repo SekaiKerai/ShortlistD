@@ -36,18 +36,24 @@ const Topbar = () => {
   };
 
   return (
-    <header className="h-16 border-b bg-white px-6 flex items-center justify-end">
+    <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8">
+      <div>
+        <h2 className="text-xl font-semibold text-slate-900">Dashboard</h2>
+
+        <p className="text-sm text-slate-500">Welcome back, {user.name}</p>
+      </div>
+
       <DropdownMenu>
         <DropdownMenuTrigger>
-          <Avatar className="cursor-pointer">
+          <Avatar className="cursor-pointer h-11 w-11 border">
             <AvatarImage src={user?.profilePicture} />
 
             <AvatarFallback>{user?.name?.[0]}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent>
-          <DropdownMenuItem>{user?.name}</DropdownMenuItem>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>{user.email}</DropdownMenuItem>
 
           <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
         </DropdownMenuContent>

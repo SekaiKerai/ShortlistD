@@ -1,30 +1,63 @@
 import { LayoutDashboard, Building2, FileText, User } from "lucide-react";
 
+import { NavLink } from "react-router-dom";
+
 const Sidebar = () => {
+  const menuItems = [
+    {
+      name: "Dashboard",
+      icon: LayoutDashboard,
+      path: "/dashboard",
+    },
+    {
+      name: "Companies",
+      icon: Building2,
+      path: "/companies",
+    },
+    {
+      name: "Applications",
+      icon: FileText,
+      path: "/applications",
+    },
+    {
+      name: "Profile",
+      icon: User,
+      path: "/profile",
+    },
+  ];
+
   return (
-    <aside className="w-64 h-screen border-r bg-white p-5">
-      <h1 className="text-2xl font-bold mb-8">ShortlistD</h1>
+    <aside className="w-72 h-screen bg-white border-r border-slate-200 flex flex-col px-5 py-6">
+      <div className="mb-10">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          ShortlistD
+        </h1>
 
-      <nav className="flex flex-col gap-3">
-        <button className="flex items-center gap-3 rounded-lg px-4 py-3 hover:bg-slate-100 transition">
-          <LayoutDashboard size={20} />
-          Dashboard
-        </button>
+        <p className="text-sm text-slate-500 mt-1">Placement Portal</p>
+      </div>
 
-        <button className="flex items-center gap-3 rounded-lg px-4 py-3 hover:bg-slate-100 transition">
-          <Building2 size={20} />
-          Companies
-        </button>
+      <nav className="flex flex-col gap-2">
+        {menuItems.map((item) => {
+          const Icon = item.icon;
 
-        <button className="flex items-center gap-3 rounded-lg px-4 py-3 hover:bg-slate-100 transition">
-          <FileText size={20} />
-          Applications
-        </button>
+          return (
+            <NavLink
+              key={item.name}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
+                  isActive
+                    ? "bg-slate-900 text-white"
+                    : "text-slate-700 hover:bg-slate-100"
+                }`
+              }
+            >
+              <Icon size={20} />
 
-        <button className="flex items-center gap-3 rounded-lg px-4 py-3 hover:bg-slate-100 transition">
-          <User size={20} />
-          Profile
-        </button>
+              {item.name}
+            </NavLink>
+          );
+        })}
       </nav>
     </aside>
   );

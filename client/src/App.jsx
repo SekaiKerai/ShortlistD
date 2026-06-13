@@ -6,6 +6,9 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import CompleteProfilePage from "./pages/CompleteProfilePage";
+import CompaniesPage from "./pages/CompaniesPage";
+import ApplicationsPage from "./pages/ApplicationsPage";
+import ProfilePage from "./pages/ProfilePage";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
@@ -34,6 +37,33 @@ function App() {
               ) : (
                 <DashboardPage />
               )}
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/companies"
+          element={
+            <ProtectedRoute>
+              <CompaniesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/applications"
+          element={
+            <ProtectedRoute>
+              <ApplicationsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
