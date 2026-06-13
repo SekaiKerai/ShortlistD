@@ -1,18 +1,52 @@
+const { OAuth2Client } = require("google-auth-library");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 
-const testLogin = async (req, res) => {
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const ADMIN_EMAILS = ["tnp.nits@gmail.com", "tnp.nits.2027@gmail.com"];
+
+const googleLogin = async (req, res) => {
   try {
-    const { email, role } = req.body;
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({
+        success: false,
+        message: "Google credential missing",
+      });
+    }
+
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    const { sub: googleId, email, name, picture } = payload;
+
+    const isAdmin = ADMIN_EMAILS.includes(email);
+
+    const isInstituteEmail = email.endsWith(".nits.ac.in");
+
+    if (!isAdmin && !isInstituteEmail) {
+      return res.status(403).json({
+        success: false,
+        message: "Only institute email accounts are allowed",
+      });
+    }
 
     let user = await User.findOne({ email });
 
     if (!user) {
       user = await User.create({
-        name: "Test User",
+        googleId,
+        name,
         email,
-        role: role || "student",
-        scholarId: role === "student" ? "2312176" : undefined,
+        profilePicture: picture,
+        role: isAdmin ? "admin" : "student",
+        scholarId: isAdmin ? undefined : null,
       });
     }
 
@@ -25,13 +59,13 @@ const testLogin = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Login successful",
       user,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -39,5 +73,24 @@ const testLogin = async (req, res) => {
 };
 
 module.exports = {
-  testLogin,
+  googleLogin,
+};
+
+const getCurrentUser = async (req, res) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      user: req.user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = {
+  googleLogin,
+  getCurrentUser,
 };

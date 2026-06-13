@@ -21,14 +21,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       sparse: true,
       trim: true,
+      default: null,
       validate: {
         validator: function (value) {
-          if (this.role === "admin" && !value) {
+          if (!value) {
             return true;
-          }
-
-          if (this.role === "student" && !value) {
-            return false;
           }
 
           const scholarRegex = /^\d{7}$/;
