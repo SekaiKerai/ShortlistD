@@ -4,6 +4,8 @@ const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
+const testRoutes = require("./routes/testRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -43,4 +45,6 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.use("/api/test", testRoutes);
+app.use("/api/auth", authRoutes);
 module.exports = app;
