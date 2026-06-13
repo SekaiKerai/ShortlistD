@@ -1,36 +1,14 @@
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import DashboardLayout from "@/layout/DashboardLayout";
 
 const DashboardPage = () => {
-  const navigate = useNavigate();
-
-  const { user, setUser } = useAuth();
-
-  const handleLogout = async () => {
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,
-        {},
-        {
-          withCredentials: true,
-        },
-      );
-
-      setUser(null);
-
-      navigate("/login");
-    } catch (error) {
-      alert("Logout failed");
-    }
-  };
-
   return (
-    <div>
-      <h1>Welcome {user.name}</h1>
+    <DashboardLayout>
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <h1 className="text-3xl font-bold">Student Dashboard</h1>
 
-      <button onClick={handleLogout}>Logout</button>
-    </div>
+        <p className="text-slate-500 mt-2">Welcome to ShortlistD</p>
+      </div>
+    </DashboardLayout>
   );
 };
 
