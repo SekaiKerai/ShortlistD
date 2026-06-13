@@ -1,10 +1,13 @@
 import axios from "axios";
 import { GoogleLogin } from "@react-oauth/google";
+import { useAuth } from "../context/AuthContext";
 
 const LoginPage = () => {
+  const { fetchCurrentUser } = useAuth();
+
   const handleSuccess = async (credentialResponse) => {
     try {
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/google`,
         {
           credential: credentialResponse.credential,
@@ -14,10 +17,10 @@ const LoginPage = () => {
         },
       );
 
-      console.log(response.data);
+      await fetchCurrentUser();
+
       alert("Login successful");
     } catch (error) {
-      console.error(error.response?.data);
       alert(error.response?.data?.message || "Login failed");
     }
   };
