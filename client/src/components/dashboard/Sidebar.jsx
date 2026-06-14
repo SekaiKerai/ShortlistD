@@ -1,9 +1,21 @@
-import { LayoutDashboard, Building2, FileText, User } from "lucide-react";
+import {
+  LayoutDashboard,
+  Building2,
+  FileText,
+  User,
+  PlusSquare,
+  Users,
+  Briefcase,
+} from "lucide-react";
 
 import { NavLink } from "react-router-dom";
 
+import { useAuth } from "@/context/AuthContext";
+
 const Sidebar = () => {
-  const menuItems = [
+  const { user } = useAuth();
+
+  const studentMenuItems = [
     {
       name: "Dashboard",
       icon: LayoutDashboard,
@@ -25,6 +37,36 @@ const Sidebar = () => {
       path: "/profile",
     },
   ];
+
+  const adminMenuItems = [
+    {
+      name: "Dashboard",
+      icon: LayoutDashboard,
+      path: "/dashboard",
+    },
+    {
+      name: "Create Company",
+      icon: PlusSquare,
+      path: "/admin/create-company",
+    },
+    {
+      name: "Manage Companies",
+      icon: Briefcase,
+      path: "/admin/companies",
+    },
+    {
+      name: "Applicants",
+      icon: FileText,
+      path: "/admin/applicants",
+    },
+    {
+      name: "Students",
+      icon: Users,
+      path: "/admin/students",
+    },
+  ];
+
+  const menuItems = user?.role === "admin" ? adminMenuItems : studentMenuItems;
 
   return (
     <aside className="w-72 h-screen bg-white border-r border-slate-200 flex flex-col px-5 py-6">

@@ -1,3 +1,4 @@
+import axios from "axios";
 const CompanyCard = ({ company }) => {
   const deadline = new Date(company.applicationDeadline);
 
@@ -61,6 +62,21 @@ const CompanyCard = ({ company }) => {
       {/* Apply Button */}
       <button
         disabled={!company.isEligible}
+        onClick={async () => {
+          try {
+            const response = await axios.post(
+              `${import.meta.env.VITE_API_BASE_URL}/application/apply/${company._id}`,
+              {},
+              {
+                withCredentials: true,
+              },
+            );
+
+            alert(response.data.message);
+          } catch (error) {
+            alert(error.response?.data?.message || "Failed to apply");
+          }
+        }}
         className={`w-full mt-5 py-3 rounded-2xl font-medium transition-all ${
           company.isEligible
             ? "bg-slate-900 text-white hover:opacity-90"
