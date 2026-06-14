@@ -19,9 +19,9 @@ const companySchema = new mongoose.Schema(
       required: true,
     },
 
-    jobType: {
+    offerType: {
       type: String,
-      enum: ["internship", "fte", "intern+fte"],
+      enum: ["6m+ppo", "6m+fte", "fte"],
       required: true,
     },
 
@@ -52,6 +52,31 @@ const companySchema = new mongoose.Schema(
       },
     ],
 
+    eligibleGraduationYears: [
+      {
+        type: Number,
+      },
+    ],
+    requiredProfileFields: [
+      {
+        type: String,
+        enum: [
+          "name",
+          "email",
+          "scholarId",
+          "branch",
+          "graduationYear",
+          "cgpa",
+          "backlogs",
+          "class10Percentage",
+          "class12Percentage",
+          "resumeDriveLink",
+          "github",
+          "linkedin",
+          "skills",
+        ],
+      },
+    ],
     applicationDeadline: {
       type: Date,
       required: true,

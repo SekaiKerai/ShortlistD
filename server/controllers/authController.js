@@ -1,5 +1,7 @@
 const { OAuth2Client } = require("google-auth-library");
+
 const User = require("../models/User");
+
 const generateToken = require("../utils/generateToken");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -26,9 +28,17 @@ const googleLogin = async (req, res) => {
 
     const { sub: googleId, email, name, picture } = payload;
 
-    const isAdmin = ADMIN_EMAILS.includes(email);
+    const normalizedEmail = email.toLowerCase();
 
-    const isInstituteEmail = email.endsWith(".nits.ac.in");
+    const isAdmin = ADMIN_EMAILS.includes(normalizedEmail);
+
+    const isInstituteEmail = normalizedEmail.endsWith(".nits.ac.in");
+
+    console.log("EMAIL:", normalizedEmail);
+
+    console.log("IS ADMIN:", isAdmin);
+
+    console.log("IS INSTITUTE:", isInstituteEmail);
 
     if (!isAdmin && !isInstituteEmail) {
       return res.status(403).json({
@@ -37,17 +47,32 @@ const googleLogin = async (req, res) => {
       });
     }
 
-    let user = await User.findOne({ email });
+    let user = await User.findOne({
+      email: normalizedEmail,
+    });
 
+    // create user
     if (!user) {
       user = await User.create({
         googleId,
         name,
-        email,
+        email: normalizedEmail,
         profilePicture: picture,
         role: isAdmin ? "admin" : "student",
         scholarId: isAdmin ? undefined : null,
       });
+    } else {
+      // fix old users missing googleId
+      if (!user.googleId) {
+        user.googleId = googleId;
+      }
+
+      // update role if admin logs in
+      if (isAdmin && user.role !== "admin") {
+        user.role = "admin";
+      }
+
+      await user.save();
     }
 
     const token = generateToken(user._id, user.role);
@@ -65,15 +90,13 @@ const googleLogin = async (req, res) => {
       user,
     });
   } catch (error) {
+    console.error("GOOGLE LOGIN ERROR:", error);
+
     return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
-};
-
-module.exports = {
-  googleLogin,
 };
 
 const getCurrentUser = async (req, res) => {
@@ -83,6 +106,69 @@ const getCurrentUser = async (req, res) => {
       user: req.user,
     });
   } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const updateProfile = async (req, res) => {
+  try {
+    console.log("PROFILE UPDATE BODY:", req.body);
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const blockedFields = [
+      "role",
+      "isPlaced",
+      "placedCompany",
+      "placedCTC",
+      "placementType",
+      "googleId",
+      "email",
+    ];
+
+    // scholarId can only be set once
+    if (user.scholarId) {
+      blockedFields.push("scholarId");
+    }
+
+    // branch can only be set once
+    if (user.branch) {
+      blockedFields.push("branch");
+    }
+
+    blockedFields.forEach((field) => {
+      delete req.body[field];
+    });
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $set: req.body,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("UPDATE PROFILE ERROR:", error);
+
     return res.status(500).json({
       success: false,
       message: error.message,
@@ -106,5 +192,6 @@ const logoutUser = (req, res) => {
 module.exports = {
   googleLogin,
   getCurrentUser,
+  updateProfile,
   logoutUser,
 };

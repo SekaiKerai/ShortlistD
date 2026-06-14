@@ -9,6 +9,7 @@ import CompleteProfilePage from "./pages/CompleteProfilePage";
 import CompaniesPage from "./pages/CompaniesPage";
 import ApplicationsPage from "./pages/ApplicationsPage";
 import ProfilePage from "./pages/ProfilePage";
+import CreateCompanyPage from "./pages/CreateCompanyPage";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
@@ -73,6 +74,15 @@ function App() {
           element={
             <RoleProtectedRoute role="admin">
               <AdminDashboardPage />
+            </RoleProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/create-company"
+          element={
+            <RoleProtectedRoute role="admin">
+              <CreateCompanyPage />
             </RoleProtectedRoute>
           }
         />

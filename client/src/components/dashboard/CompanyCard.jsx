@@ -1,87 +1,75 @@
-import { Card, CardContent } from "@/components/ui/card";
-
 const CompanyCard = ({ company }) => {
   const deadline = new Date(company.applicationDeadline);
 
   const now = new Date();
 
-  const timeLeft = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
+  const timeLeft = deadline - now;
+
+  const daysLeft = Math.max(Math.ceil(timeLeft / (1000 * 60 * 60 * 24)), 0);
 
   return (
-    <Card className="rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition">
-      <CardContent className="p-6 space-y-4">
+    <div className="bg-white border rounded-3xl p-6 shadow-sm hover:shadow-md transition-all">
+      {/* Header */}
+      <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-2xl font-semibold">{company.companyName}</h2>
+          <h2 className="text-xl font-bold">{company.companyName}</h2>
 
-          <p className="text-slate-500">{company.role}</p>
+          <p className="text-slate-500 mt-1">{company.role}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <p className="text-slate-500">Package</p>
+        <span className="bg-slate-100 px-3 py-1 rounded-full text-sm font-medium">
+          {company.offerType}
+        </span>
+      </div>
 
-            <p className="font-medium">{company.package} LPA</p>
+      {/* Package */}
+      <div className="mt-5">
+        <p className="text-2xl font-bold">{company.package} LPA</p>
+
+        <p className="text-slate-500 text-sm">Package</p>
+      </div>
+
+      {/* Details */}
+      <div className="mt-5 space-y-2 text-sm">
+        <p>
+          <strong>Location:</strong> {company.location}
+        </p>
+
+        <p>
+          <strong>Min CGPA:</strong> {company.minimumCGPA}
+        </p>
+
+        <p>
+          <strong>Deadline:</strong> {daysLeft} day
+          {daysLeft !== 1 && "s"} left
+        </p>
+      </div>
+
+      {/* Eligibility */}
+      <div className="mt-5">
+        {company.isEligible ? (
+          <div className="bg-green-50 border border-green-200 text-green-700 rounded-2xl px-4 py-3">
+            ✅ Eligible
           </div>
-
-          <div>
-            <p className="text-slate-500">CGPA</p>
-
-            <p className="font-medium">{company.minimumCGPA}</p>
+        ) : (
+          <div className="bg-red-50 border border-red-200 text-red-700 rounded-2xl px-4 py-3">
+            ❌ {company.eligibilityReason}
           </div>
+        )}
+      </div>
 
-          <div>
-            <p className="text-slate-500">Backlogs</p>
-
-            <p className="font-medium">{company.allowedBacklogs}</p>
-          </div>
-
-          <div>
-            <p className="text-slate-500">Deadline</p>
-
-            <p className="font-medium">
-              {timeLeft > 0 ? `${timeLeft} days left` : "Closed"}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <p className="text-slate-500 text-sm mb-1">Eligible Branches</p>
-
-          <div className="flex flex-wrap gap-2">
-            {company.eligibleBranches.map((branch) => (
-              <span
-                key={branch}
-                className="px-3 py-1 rounded-full bg-slate-100 text-sm"
-              >
-                {branch}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex gap-3 pt-2">
-          {company.whatsappGroupLink && (
-            <a
-              href={company.whatsappGroupLink}
-              target="_blank"
-              className="text-sm font-medium text-blue-600"
-            >
-              Join Group
-            </a>
-          )}
-
-          {company.jobDescriptionLink && (
-            <a
-              href={company.jobDescriptionLink}
-              target="_blank"
-              className="text-sm font-medium text-slate-800"
-            >
-              View JD
-            </a>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+      {/* Apply Button */}
+      <button
+        disabled={!company.isEligible}
+        className={`w-full mt-5 py-3 rounded-2xl font-medium transition-all ${
+          company.isEligible
+            ? "bg-slate-900 text-white hover:opacity-90"
+            : "bg-slate-200 text-slate-500 cursor-not-allowed"
+        }`}
+      >
+        {company.isEligible ? "Apply" : "Cannot Apply"}
+      </button>
+    </div>
   );
 };
 

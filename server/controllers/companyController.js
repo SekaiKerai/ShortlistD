@@ -1,4 +1,5 @@
 const Company = require("../models/Company");
+const checkEligibility = require("../utils/checkEligibility");
 
 const createCompany = async (req, res) => {
   try {
@@ -20,18 +21,25 @@ const createCompany = async (req, res) => {
   }
 };
 
-const getAllCompanies = async (req, res) => {
+const getCompanies = async (req, res) => {
   try {
-    const companies = await Company.find()
-      .sort({
-        createdAt: -1,
-      })
-      .populate("createdBy", "name email");
+    const companies = await Company.find().sort({
+      createdAt: -1,
+    });
+
+    const companiesWithEligibility = companies.map((company) => {
+      const eligibility = checkEligibility(req.user, company);
+
+      return {
+        ...company.toObject(),
+        isEligible: eligibility.isEligible,
+        eligibilityReason: eligibility.reason,
+      };
+    });
 
     return res.status(200).json({
       success: true,
-      count: companies.length,
-      companies,
+      companies: companiesWithEligibility,
     });
   } catch (error) {
     return res.status(500).json({
@@ -43,5 +51,5 @@ const getAllCompanies = async (req, res) => {
 
 module.exports = {
   createCompany,
-  getAllCompanies,
+  getCompanies,
 };

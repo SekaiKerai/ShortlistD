@@ -1,69 +1,88 @@
 const mongoose = require("mongoose");
 
-const branchCodeMap = {
-  1: "CE",
-  2: "CSE",
-  3: "ECE",
-  4: "EE",
-  5: "EIE",
-  6: "ME",
-};
+const projectSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+    },
+
+    description: {
+      type: String,
+    },
+
+    techStack: [
+      {
+        type: String,
+      },
+    ],
+
+    githubLink: {
+      type: String,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
+const experienceSchema = new mongoose.Schema(
+  {
+    company: {
+      type: String,
+    },
+
+    role: {
+      type: String,
+    },
+
+    duration: {
+      type: String,
+    },
+
+    description: {
+      type: String,
+    },
+  },
+  {
+    _id: false,
+  },
+);
+
+const achievementSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+    },
+
+    description: {
+      type: String,
+    },
+  },
+  {
+    _id: false,
+  },
+);
 
 const userSchema = new mongoose.Schema(
   {
     googleId: {
       type: String,
-      default: null,
-    },
-
-    scholarId: {
-      type: String,
-      unique: true,
-      sparse: true,
-      trim: true,
-      default: null,
-      validate: {
-        validator: function (value) {
-          if (!value) {
-            return true;
-          }
-
-          const scholarRegex = /^\d{7}$/;
-
-          if (!scholarRegex.test(value)) {
-            return false;
-          }
-
-          const degreeCode = Number(value[2]);
-          const branchCode = Number(value[3]);
-
-          if (degreeCode !== 1) {
-            return false;
-          }
-
-          return !!branchCodeMap[branchCode];
-        },
-        message: "Invalid scholar ID format",
-      },
+      required: true,
     },
 
     name: {
       type: String,
       required: true,
-      trim: true,
     },
 
     email: {
       type: String,
       required: true,
       unique: true,
-      lowercase: true,
-      trim: true,
     },
 
     profilePicture: {
       type: String,
-      default: "",
     },
 
     role: {
@@ -72,23 +91,79 @@ const userSchema = new mongoose.Schema(
       default: "student",
     },
 
+    scholarId: {
+      type: String,
+      sparse: true,
+    },
+
     branch: {
       type: String,
       enum: ["CE", "CSE", "ECE", "EE", "EIE", "ME"],
-      default: null,
     },
 
     cgpa: {
       type: Number,
       min: 0,
       max: 10,
-      default: null,
     },
 
     backlogs: {
       type: Number,
       default: 0,
-      min: 0,
+    },
+
+    graduationYear: {
+      type: Number,
+    },
+
+    class10Percentage: {
+      type: Number,
+    },
+
+    class12Percentage: {
+      type: Number,
+    },
+
+    resumeDriveLink: {
+      type: String,
+      default: "",
+    },
+
+    skills: [
+      {
+        type: String,
+      },
+    ],
+
+    projects: [projectSchema],
+
+    experience: [experienceSchema],
+
+    achievements: [achievementSchema],
+
+    github: {
+      type: String,
+      default: "",
+    },
+
+    linkedin: {
+      type: String,
+      default: "",
+    },
+
+    portfolio: {
+      type: String,
+      default: "",
+    },
+
+    leetcode: {
+      type: String,
+      default: "",
+    },
+
+    codeforces: {
+      type: String,
+      default: "",
     },
 
     isPlaced: {
@@ -96,9 +171,19 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    resumeUrl: {
+    placedCompany: {
       type: String,
       default: "",
+    },
+
+    placedCTC: {
+      type: Number,
+      default: 0,
+    },
+
+    placementType: {
+      type: String,
+      enum: ["6m+ppo", "6m+fte", "fte"],
     },
   },
   {
