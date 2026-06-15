@@ -20,6 +20,8 @@ import RoleProtectedRoute from "./routes/RoleProtectedRoute";
 
 import EligibleStudentsPage from "./pages/EligibleStudentsPage";
 
+import AdminAnnouncementsPage from "./pages/AdminAnnouncementsPage";
+
 function App() {
   const { user, loading } = useAuth();
 
@@ -118,7 +120,14 @@ function App() {
             </RoleProtectedRoute>
           }
         />
-
+        <Route
+          path="/admin/announcements"
+          element={
+            <RoleProtectedRoute role="admin">
+              <AdminAnnouncementsPage />
+            </RoleProtectedRoute>
+          }
+        />
         <Route
           path="/admin/company/:companyId/applicants"
           element={

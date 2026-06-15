@@ -20,6 +20,10 @@ const companyRoutes = require("./routes/companyRoutes");
 
 const applicationRoutes = require("./routes/applicationRoutes");
 
+const emailRoutes = require("./routes/emailRoutes");
+
+const announcementRoutes = require("./routes/announcementRoutes");
+
 const app = express();
 
 // Security middleware
@@ -74,5 +78,9 @@ app.use("/api/user", userRoutes);
 app.use("/api/company", companyRoutes);
 
 app.use("/api/application", applicationRoutes);
+
+app.use("/api/email", emailRoutes);
+
+app.use("/api/announcement", announcementRoutes);
 
 module.exports = app;

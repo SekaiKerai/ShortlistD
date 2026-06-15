@@ -2,21 +2,23 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 import DashboardLayout from "@/layout/DashboardLayout";
-
 import { useParams } from "react-router-dom";
 
 const ApplicantsPage = () => {
   const { companyId } = useParams();
 
   const [company, setCompany] = useState(null);
-
   const [applicants, setApplicants] = useState([]);
-
   const [selectedIds, setSelectedIds] = useState([]);
 
   const [search, setSearch] = useState("");
-
   const [loading, setLoading] = useState(true);
+
+  const [showEmailModal, setShowEmailModal] = useState(false);
+
+  const [emailSubject, setEmailSubject] = useState("");
+
+  const [emailMessage, setEmailMessage] = useState("");
 
   const fetchApplicants = async () => {
     try {
@@ -85,7 +87,7 @@ const ApplicantsPage = () => {
     }
 
     try {
-      // update selected
+      // Update selected
       await Promise.all(
         selectedIds.map((id) =>
           axios.put(
@@ -100,7 +102,7 @@ const ApplicantsPage = () => {
         ),
       );
 
-      // OA special logic
+      // OA auto reject
       if (targetStatus === "oa") {
         const unselected = applicants.filter(
           (app) => !selectedIds.includes(app._id) && app.status === "applied",
@@ -128,6 +130,38 @@ const ApplicantsPage = () => {
       fetchApplicants();
     } catch (error) {
       alert(error.response?.data?.message || "Bulk update failed");
+    }
+  };
+
+  const handleSendEmail = async () => {
+    if (selectedIds.length === 0) {
+      return alert("Select students first");
+    }
+
+    try {
+      const studentIds = applicants
+        .filter((app) => selectedIds.includes(app._id))
+        .map((app) => app.student._id);
+
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/email/bulk`,
+        {
+          studentIds,
+          subject: emailSubject,
+          message: emailMessage,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      alert("Emails sent successfully");
+
+      setShowEmailModal(false);
+      setEmailSubject("");
+      setEmailMessage("");
+    } catch (error) {
+      alert(error.response?.data?.message || "Email failed");
     }
   };
 
@@ -202,6 +236,13 @@ const ApplicantsPage = () => {
           >
             Reject Selected
           </button>
+
+          <button
+            onClick={() => setShowEmailModal(true)}
+            className="bg-slate-900 text-white px-5 py-2 rounded-xl"
+          >
+            Send Email
+          </button>
         </div>
 
         <input
@@ -211,6 +252,47 @@ const ApplicantsPage = () => {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full border rounded-2xl p-4"
         />
+
+        {/* Email Modal */}
+        {showEmailModal && (
+          <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+            <div className="bg-white rounded-3xl p-8 w-[500px] space-y-4">
+              <h2 className="text-2xl font-bold">Send Email</h2>
+
+              <input
+                type="text"
+                placeholder="Subject"
+                value={emailSubject}
+                onChange={(e) => setEmailSubject(e.target.value)}
+                className="w-full border rounded-xl p-3"
+              />
+
+              <textarea
+                rows={5}
+                placeholder="Message..."
+                value={emailMessage}
+                onChange={(e) => setEmailMessage(e.target.value)}
+                className="w-full border rounded-xl p-3"
+              />
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowEmailModal(false)}
+                  className="border px-5 py-2 rounded-xl"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={handleSendEmail}
+                  className="bg-slate-900 text-white px-5 py-2 rounded-xl"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="bg-white rounded-3xl border p-10 text-center">
@@ -257,22 +339,13 @@ const ApplicantsPage = () => {
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-end gap-3">
-                      <span
-                        className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
-                          application.status,
-                        )}`}
-                      >
-                        {application.status.toUpperCase()}
-                      </span>
-
-                      <button
-                        onClick={() => handleDebar(application._id)}
-                        className="bg-red-600 text-white px-4 py-2 rounded-xl"
-                      >
-                        Debar
-                      </button>
-                    </div>
+                    <span
+                      className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
+                        application.status,
+                      )}`}
+                    >
+                      {application.status.toUpperCase()}
+                    </span>
                   </div>
 
                   <div className="grid md:grid-cols-3 gap-4 mt-5 text-sm">
@@ -289,28 +362,27 @@ const ApplicantsPage = () => {
                     </p>
                   </div>
 
-                  <div className="mt-5">
-                    <label className="text-sm font-medium text-slate-600">
-                      Update Status
-                    </label>
-
+                  <div className="mt-5 flex gap-3">
                     <select
                       value={application.status}
                       onChange={(e) =>
                         handleStatusChange(application._id, e.target.value)
                       }
-                      className="w-full mt-2 border rounded-xl p-3"
+                      className="border rounded-xl p-3"
                     >
                       <option value="applied">Applied</option>
-
                       <option value="oa">OA</option>
-
                       <option value="interview">Interview</option>
-
                       <option value="selected">Selected</option>
-
                       <option value="rejected">Rejected</option>
                     </select>
+
+                    <button
+                      onClick={() => handleDebar(application._id)}
+                      className="bg-red-600 text-white px-4 rounded-xl"
+                    >
+                      Debar
+                    </button>
                   </div>
                 </div>
               );

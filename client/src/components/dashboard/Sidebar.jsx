@@ -6,6 +6,7 @@ import {
   PlusSquare,
   Users,
   Briefcase,
+  Bell,
   BarChart3,
 } from "lucide-react";
 
@@ -54,6 +55,11 @@ const Sidebar = () => {
       name: "Manage Companies",
       icon: Briefcase,
       path: "/admin/companies",
+    },
+    {
+      name: "Announcements",
+      icon: Bell,
+      path: "/admin/announcements",
     },
     {
       name: "Students",
