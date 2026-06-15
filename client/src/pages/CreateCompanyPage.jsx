@@ -7,21 +7,8 @@ const branches = ["CE", "CSE", "ECE", "EE", "EIE", "ME"];
 
 const graduationYears = [2027, 2028, 2029];
 
-const profileFields = [
-  "name",
-  "email",
-  "scholarId",
-  "branch",
-  "graduationYear",
-  "cgpa",
-  "backlogs",
-  "class10Percentage",
-  "class12Percentage",
-  "resumeDriveLink",
-  "github",
-  "linkedin",
-  "skills",
-];
+const inputStyle =
+  "w-full rounded-[1.35rem] border border-[#DDD1C3] bg-[#F8F3EC] px-5 py-4 outline-none focus:border-[#C9A784] transition-all";
 
 const CreateCompanyPage = () => {
   const [formData, setFormData] = useState({
@@ -68,15 +55,6 @@ const CreateCompanyPage = () => {
     });
   };
 
-  const toggleProfileField = (field) => {
-    setFormData({
-      ...formData,
-      requiredProfileFields: formData.requiredProfileFields.includes(field)
-        ? formData.requiredProfileFields.filter((f) => f !== field)
-        : [...formData.requiredProfileFields, field],
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -118,181 +96,382 @@ const CreateCompanyPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-        <h1 className="text-3xl font-bold mb-8">Create Company</h1>
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Hero */}
+        <div
+          className="
+          rounded-[2.5rem]
+          border
+          border-[#DCCFBE]
+          bg-[#FBF7F1]
+          p-8
+        "
+        >
+          <p
+            className="
+            uppercase
+            tracking-[0.18em]
+            text-sm
+            text-[#9A876F]
+            font-semibold
+          "
+          >
+            Placement Drive
+          </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-5">
-            <input
-              type="text"
-              name="companyName"
-              placeholder="Company Name"
-              value={formData.companyName}
-              onChange={handleChange}
-              className="border rounded-xl p-3"
-              required
-            />
+          <h1
+            className="
+            text-[3rem]
+            font-black
+            text-[#231F1B]
+            mt-3
+            leading-none
+          "
+          >
+            Create Company
+          </h1>
 
-            <input
-              type="text"
-              name="role"
-              placeholder="Role"
-              value={formData.role}
-              onChange={handleChange}
-              className="border rounded-xl p-3"
-              required
-            />
+          <p className="text-[#746B60] mt-4 text-lg max-w-2xl">
+            Add company details, eligibility and application information.
+          </p>
+        </div>
 
-            <input
-              type="number"
-              name="package"
-              placeholder="Package (LPA)"
-              value={formData.package}
-              onChange={handleChange}
-              className="border rounded-xl p-3"
-              required
-            />
+        <form
+          onSubmit={handleSubmit}
+          className="
+          bg-[#FBF7F1]
+          border
+          border-[#DED3C6]
+          rounded-[2.5rem]
+          p-8
+          space-y-10
+        "
+        >
+          {/* Basic Info */}
+          <section>
+            <h2 className="text-2xl font-black text-[#231F1B] mb-6">
+              Company Information
+            </h2>
 
-            <select
-              name="offerType"
-              value={formData.offerType}
-              onChange={handleChange}
-              className="border rounded-xl p-3"
-            >
-              <option value="fte">FTE</option>
+            <div className="grid md:grid-cols-2 gap-5">
+              <input
+                type="text"
+                name="companyName"
+                placeholder="Company Name"
+                value={formData.companyName}
+                onChange={handleChange}
+                className={inputStyle}
+                required
+              />
 
-              <option value="6m+fte">6M + FTE</option>
+              <input
+                type="text"
+                name="role"
+                placeholder="Role"
+                value={formData.role}
+                onChange={handleChange}
+                className={inputStyle}
+                required
+              />
 
-              <option value="6m+ppo">6M + PPO</option>
-            </select>
+              <input
+                type="number"
+                name="package"
+                placeholder="Package (LPA)"
+                value={formData.package}
+                onChange={handleChange}
+                className={inputStyle}
+                required
+              />
 
-            <input
-              type="text"
-              name="location"
-              placeholder="Location"
-              value={formData.location}
-              onChange={handleChange}
-              className="border rounded-xl p-3"
-              required
-            />
+              <select
+                name="offerType"
+                value={formData.offerType}
+                onChange={handleChange}
+                className={inputStyle}
+              >
+                <option value="fte">FTE</option>
 
-            <input
-              type="number"
-              name="minimumCGPA"
-              placeholder="Minimum CGPA"
-              value={formData.minimumCGPA}
-              onChange={handleChange}
-              className="border rounded-xl p-3"
-              min="0"
-              max="10"
-              step="0.1"
-              required
-            />
+                <option value="6m+fte">6M + FTE</option>
 
-            <input
-              type="number"
-              name="allowedBacklogs"
-              placeholder="Allowed Backlogs"
-              value={formData.allowedBacklogs}
-              onChange={handleChange}
-              className="border rounded-xl p-3"
-            />
+                <option value="6m+ppo">6M + PPO</option>
+              </select>
 
-            <input
-              type="datetime-local"
-              name="applicationDeadline"
-              value={formData.applicationDeadline}
-              onChange={handleChange}
-              className="border rounded-xl p-3"
-              required
-            />
-          </div>
+              <input
+                type="text"
+                name="location"
+                placeholder="Location"
+                value={formData.location}
+                onChange={handleChange}
+                className={inputStyle}
+              />
 
-          <textarea
-            name="description"
-            placeholder="Description"
-            value={formData.description}
-            onChange={handleChange}
-            className="border rounded-xl p-3 w-full h-28"
-            required
-          />
-
-          <div>
-            <h2 className="font-semibold mb-3">Eligible Branches</h2>
-
-            <div className="flex flex-wrap gap-3">
-              {branches.map((branch) => (
-                <label key={branch} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.eligibleBranches.includes(branch)}
-                    onChange={() => toggleBranch(branch)}
-                  />
-
-                  {branch}
+              {/* Better Deadline */}
+              <div
+                className="
+                rounded-[1.35rem]
+                border
+                border-[#DDD1C3]
+                bg-[#F8F3EC]
+                px-5
+                py-4
+              "
+              >
+                <label className="text-sm text-[#7A7166] font-medium block mb-2">
+                  Application Deadline
                 </label>
-              ))}
+
+                <input
+                  type="datetime-local"
+                  name="applicationDeadline"
+                  value={formData.applicationDeadline}
+                  onChange={handleChange}
+                  className="
+                  bg-transparent
+                  w-full
+                  outline-none
+                  text-[#231F1B]
+                "
+                  required
+                />
+              </div>
             </div>
-          </div>
+          </section>
 
-          <div>
-            <h2 className="font-semibold mb-3">Eligible Graduation Years</h2>
+          {/* Eligibility */}
+          <section>
+            <h2 className="text-2xl font-black text-[#231F1B] mb-6">
+              Eligibility
+            </h2>
 
-            <div className="flex gap-4 flex-wrap">
-              {graduationYears.map((year) => (
-                <label key={year} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.eligibleGraduationYears.includes(year)}
-                    onChange={() => toggleYear(year)}
-                  />
+            <div className="grid md:grid-cols-2 gap-5 mb-8">
+              <input
+                type="number"
+                name="minimumCGPA"
+                placeholder="Minimum CGPA"
+                value={formData.minimumCGPA}
+                onChange={handleChange}
+                className={inputStyle}
+              />
 
-                  {year}
-                </label>
-              ))}
+              <input
+                type="number"
+                name="allowedBacklogs"
+                placeholder="Allowed Backlogs"
+                value={formData.allowedBacklogs}
+                onChange={handleChange}
+                className={inputStyle}
+              />
             </div>
-          </div>
 
-          <div>
-            <h2 className="font-semibold mb-3">Required Profile Fields</h2>
+            {/* Branches */}
+            <div className="mb-8">
+              <p className="font-semibold text-[#231F1B] mb-4 text-lg">
+                Eligible Branches
+              </p>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {profileFields.map((field) => (
-                <label key={field} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.requiredProfileFields.includes(field)}
-                    onChange={() => toggleProfileField(field)}
-                  />
+              {/* Selected */}
+              {formData.eligibleBranches.length > 0 && (
+                <div className="flex flex-wrap gap-3 mb-5">
+                  {formData.eligibleBranches.map((branch) => (
+                    <div
+                      key={branch}
+                      className="
+          flex
+          items-center
+          gap-3
+          bg-[#231F1B]
+          text-white
+          px-5
+          py-3
+          rounded-full
+          shadow-sm
+        "
+                    >
+                      <span className="font-medium">{branch}</span>
 
-                  {field}
-                </label>
-              ))}
+                      <button
+                        type="button"
+                        onClick={() => toggleBranch(branch)}
+                        className="
+            flex
+            items-center
+            justify-center
+            w-7
+            h-7
+            rounded-full
+            bg-white/20
+            hover:bg-white/30
+            transition-all
+            text-[1.15rem]
+            font-bold
+            leading-none
+          "
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Available */}
+              <div className="flex flex-wrap gap-3">
+                {branches
+                  .filter(
+                    (branch) => !formData.eligibleBranches.includes(branch),
+                  )
+                  .map((branch) => (
+                    <button
+                      key={branch}
+                      type="button"
+                      onClick={() => toggleBranch(branch)}
+                      className="
+          px-5
+          py-3
+          rounded-full
+          border
+          border-[#DDD1C3]
+          bg-[#F4ECE2]
+          hover:bg-[#ECE1D3]
+          transition-all
+        "
+                    >
+                      + {branch}
+                    </button>
+                  ))}
+              </div>
             </div>
-          </div>
 
-          <input
-            type="url"
-            name="whatsappGroupLink"
-            placeholder="WhatsApp Group Link"
-            value={formData.whatsappGroupLink}
-            onChange={handleChange}
-            className="border rounded-xl p-3 w-full"
-          />
+            {/* Years */}
+            <div>
+              <p className="font-semibold text-[#231F1B] mb-4 text-lg">
+                Eligible Batches
+              </p>
 
-          <input
-            type="url"
-            name="jobDescriptionLink"
-            placeholder="Job Description Link"
-            value={formData.jobDescriptionLink}
-            onChange={handleChange}
-            className="border rounded-xl p-3 w-full"
-          />
+              {/* Selected */}
+              {formData.eligibleGraduationYears.length > 0 && (
+                <div className="flex flex-wrap gap-3 mb-5">
+                  {formData.eligibleGraduationYears.map((year) => (
+                    <div
+                      key={year}
+                      className="
+            flex
+            items-center
+            gap-3
+            bg-[#231F1B]
+            text-white
+            px-5
+            py-3
+            rounded-full
+            shadow-sm
+          "
+                    >
+                      <span className="font-medium">{year}</span>
+
+                      <button
+                        type="button"
+                        onClick={() => toggleYear(year)}
+                        className="
+              flex
+              items-center
+              justify-center
+              w-7
+              h-7
+              rounded-full
+              bg-white/20
+              hover:bg-white/30
+              transition-all
+              text-[1.15rem]
+              font-bold
+              leading-none
+            "
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Available */}
+              <div className="flex flex-wrap gap-3">
+                {graduationYears
+                  .filter(
+                    (year) => !formData.eligibleGraduationYears.includes(year),
+                  )
+                  .map((year) => (
+                    <button
+                      key={year}
+                      type="button"
+                      onClick={() => toggleYear(year)}
+                      className="
+          px-5
+          py-3
+          rounded-full
+          border
+          border-[#DDD1C3]
+          bg-[#F4ECE2]
+          hover:bg-[#ECE1D3]
+          transition-all
+        "
+                    >
+                      + {year}
+                    </button>
+                  ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Description */}
+          <section>
+            <h2 className="text-2xl font-black text-[#231F1B] mb-5">
+              Description
+            </h2>
+
+            <textarea
+              name="description"
+              placeholder="Role, process, eligibility and other details..."
+              value={formData.description}
+              onChange={handleChange}
+              className={`${inputStyle} h-36 resize-none`}
+            />
+          </section>
+
+          {/* Links */}
+          <section className="grid md:grid-cols-2 gap-5">
+            <input
+              type="url"
+              name="whatsappGroupLink"
+              placeholder="WhatsApp Group Link"
+              value={formData.whatsappGroupLink}
+              onChange={handleChange}
+              className={inputStyle}
+            />
+
+            <input
+              type="url"
+              name="jobDescriptionLink"
+              placeholder="Job Description Link"
+              value={formData.jobDescriptionLink}
+              onChange={handleChange}
+              className={inputStyle}
+            />
+          </section>
 
           <button
             type="submit"
             disabled={loading}
-            className="bg-slate-900 text-white px-6 py-3 rounded-xl"
+            className="
+            bg-[#231F1B]
+            text-[#F7F2EA]
+            px-8
+            py-4
+            rounded-[1.4rem]
+            font-semibold
+            hover:opacity-90
+            transition-all
+          "
           >
             {loading ? "Creating..." : "Create Company"}
           </button>
