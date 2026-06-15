@@ -6,6 +6,7 @@ const {
   applyToCompany,
   getMyApplications,
   getCompanyApplicants,
+  removeApplication,
 } = require("../controllers/applicationController");
 
 const { protect, authorizeRoles } = require("../middleware/authMiddleware");
@@ -19,6 +20,13 @@ router.get(
   protect,
   authorizeRoles("admin"),
   getCompanyApplicants,
+);
+
+router.delete(
+  "/:applicationId",
+  protect,
+  authorizeRoles("admin"),
+  removeApplication,
 );
 
 module.exports = router;

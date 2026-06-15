@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 
 import DashboardLayout from "@/layout/DashboardLayout";
+
+import { useParams } from "react-router-dom";
 
 const ApplicantsPage = () => {
   const { companyId } = useParams();
@@ -11,30 +12,65 @@ const ApplicantsPage = () => {
 
   const [applicants, setApplicants] = useState([]);
 
+  const [search, setSearch] = useState("");
+
   const [loading, setLoading] = useState(true);
 
+  const fetchApplicants = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/application/company/${companyId}`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      setCompany(res.data.company);
+
+      setApplicants(res.data.applications);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchApplicants = async () => {
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/application/company/${companyId}`,
-          {
-            withCredentials: true,
-          },
-        );
-
-        setCompany(res.data.company);
-
-        setApplicants(res.data.applications);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchApplicants();
   }, [companyId]);
+
+  const handleDebar = async (applicationId) => {
+    const confirmed = window.confirm("Remove this student application?");
+
+    if (!confirmed) return;
+
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/application/${applicationId}`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      alert("Application removed successfully");
+
+      fetchApplicants();
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to remove application");
+    }
+  };
+
+  const filteredApplicants = applicants.filter((application) => {
+    const student = application.student;
+
+    const term = search.toLowerCase();
+
+    return (
+      student?.name?.toLowerCase().includes(term) ||
+      student?.email?.toLowerCase().includes(term) ||
+      student?.scholarId?.toLowerCase().includes(term)
+    );
+  });
 
   return (
     <DashboardLayout>
@@ -47,17 +83,25 @@ const ApplicantsPage = () => {
           </p>
         </div>
 
+        <input
+          type="text"
+          placeholder="Search name, scholar ID or email..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full border rounded-2xl p-4"
+        />
+
         {loading ? (
           <div className="bg-white rounded-3xl border p-10 text-center">
             Loading...
           </div>
-        ) : applicants.length === 0 ? (
+        ) : filteredApplicants.length === 0 ? (
           <div className="bg-white rounded-3xl border p-10 text-center text-slate-500">
-            No applicants yet
+            No applicants found
           </div>
         ) : (
           <div className="space-y-4">
-            {applicants.map((application) => {
+            {filteredApplicants.map((application) => {
               const student = application.student;
 
               return (
@@ -72,12 +116,15 @@ const ApplicantsPage = () => {
                       <p className="text-slate-500">{student?.email}</p>
                     </div>
 
-                    <span className="bg-slate-100 px-4 py-2 rounded-full text-sm">
-                      {application.status}
-                    </span>
+                    <button
+                      onClick={() => handleDebar(application._id)}
+                      className="bg-red-600 text-white px-4 py-2 rounded-xl"
+                    >
+                      Debar
+                    </button>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-3 mt-5 text-sm">
+                  <div className="grid md:grid-cols-3 gap-4 mt-5 text-sm">
                     <p>
                       <strong>Scholar ID:</strong> {student?.scholarId || "N/A"}
                     </p>
@@ -89,46 +136,6 @@ const ApplicantsPage = () => {
                     <p>
                       <strong>CGPA:</strong> {student?.cgpa ?? "N/A"}
                     </p>
-
-                    <p>
-                      <strong>Applied:</strong>{" "}
-                      {new Date(application.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-3 mt-5 flex-wrap">
-                    {student?.resumeDriveLink && (
-                      <a
-                        href={student.resumeDriveLink}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="bg-slate-900 text-white px-4 py-2 rounded-xl"
-                      >
-                        Resume
-                      </a>
-                    )}
-
-                    {student?.github && (
-                      <a
-                        href={student.github}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="border px-4 py-2 rounded-xl"
-                      >
-                        Github
-                      </a>
-                    )}
-
-                    {student?.linkedin && (
-                      <a
-                        href={student.linkedin}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="border px-4 py-2 rounded-xl"
-                      >
-                        LinkedIn
-                      </a>
-                    )}
                   </div>
                 </div>
               );
