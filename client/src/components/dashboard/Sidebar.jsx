@@ -6,6 +6,7 @@ import {
   PlusSquare,
   Users,
   Briefcase,
+  BarChart3,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
@@ -42,7 +43,7 @@ const Sidebar = () => {
     {
       name: "Dashboard",
       icon: LayoutDashboard,
-      path: "/dashboard",
+      path: "/admin",
     },
     {
       name: "Create Company",
@@ -55,14 +56,14 @@ const Sidebar = () => {
       path: "/admin/companies",
     },
     {
-      name: "Applicants",
-      icon: FileText,
-      path: "/admin/applicants",
-    },
-    {
       name: "Students",
       icon: Users,
       path: "/admin/students",
+    },
+    {
+      name: "Analytics",
+      icon: BarChart3,
+      path: "/admin/analytics",
     },
   ];
 
@@ -71,9 +72,7 @@ const Sidebar = () => {
   return (
     <aside className="w-72 h-screen bg-white border-r border-slate-200 flex flex-col px-5 py-6">
       <div className="mb-10">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          ShortlistD
-        </h1>
+        <h1 className="text-2xl font-bold">ShortlistD</h1>
 
         <p className="text-sm text-slate-500 mt-1">Placement Portal</p>
       </div>
@@ -86,6 +85,7 @@ const Sidebar = () => {
             <NavLink
               key={item.name}
               to={item.path}
+              end={item.path === "/admin"}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
                   isActive

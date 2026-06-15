@@ -246,7 +246,6 @@ const ProfilePage = () => {
                 </p>
               </div>
             </div>
-
             {/* Skills */}
             <div>
               <h2 className="font-semibold text-lg mb-3">Skills</h2>

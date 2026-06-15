@@ -94,6 +94,7 @@ const applyToCompany = async (req, res) => {
     });
   }
 };
+
 const getMyApplications = async (req, res) => {
   try {
     const applications = await Application.find({
@@ -115,7 +116,44 @@ const getMyApplications = async (req, res) => {
     });
   }
 };
+
+const getCompanyApplicants = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+
+    const company = await Company.findById(companyId);
+
+    if (!company) {
+      return res.status(404).json({
+        success: false,
+        message: "Company not found",
+      });
+    }
+
+    const applications = await Application.find({
+      company: companyId,
+    })
+      .populate("student")
+      .populate("company")
+      .sort({
+        createdAt: -1,
+      });
+
+    return res.status(200).json({
+      success: true,
+      company,
+      applications,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   applyToCompany,
   getMyApplications,
+  getCompanyApplicants,
 };

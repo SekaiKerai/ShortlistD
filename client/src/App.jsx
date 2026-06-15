@@ -10,9 +10,15 @@ import CompaniesPage from "./pages/CompaniesPage";
 import ApplicationsPage from "./pages/ApplicationsPage";
 import ProfilePage from "./pages/ProfilePage";
 import CreateCompanyPage from "./pages/CreateCompanyPage";
+import ManageCompaniesPage from "./pages/ManageCompaniesPage";
+import ApplicantsPage from "./pages/ApplicantsPage";
+import AdminStudentsPage from "./pages/AdminStudentsPage";
+import AdminAnalyticsPage from "./pages/AdminAnalyticsPage";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
+
+import EligibleStudentsPage from "./pages/EligibleStudentsPage";
 
 function App() {
   const { user, loading } = useAuth();
@@ -26,9 +32,16 @@ function App() {
       <Routes>
         <Route
           path="/login"
-          element={user ? <Navigate to="/dashboard" /> : <LoginPage />}
+          element={
+            user ? (
+              <Navigate to={user.role === "admin" ? "/admin" : "/dashboard"} />
+            ) : (
+              <LoginPage />
+            )
+          }
         />
 
+        {/* STUDENT */}
         <Route
           path="/dashboard"
           element={
@@ -70,6 +83,16 @@ function App() {
         />
 
         <Route
+          path="/complete-profile"
+          element={
+            <ProtectedRoute>
+              <CompleteProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ADMIN */}
+        <Route
           path="/admin"
           element={
             <RoleProtectedRoute role="admin">
@@ -88,17 +111,62 @@ function App() {
         />
 
         <Route
-          path="/complete-profile"
+          path="/admin/companies"
           element={
-            <ProtectedRoute>
-              <CompleteProfilePage />
-            </ProtectedRoute>
+            <RoleProtectedRoute role="admin">
+              <ManageCompaniesPage />
+            </RoleProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/company/:companyId/applicants"
+          element={
+            <RoleProtectedRoute role="admin">
+              <ApplicantsPage />
+            </RoleProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/company/:companyId/eligible"
+          element={
+            <RoleProtectedRoute role="admin">
+              <EligibleStudentsPage />
+            </RoleProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/students"
+          element={
+            <RoleProtectedRoute role="admin">
+              <AdminStudentsPage />
+            </RoleProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/analytics"
+          element={
+            <RoleProtectedRoute role="admin">
+              <AdminAnalyticsPage />
+            </RoleProtectedRoute>
           }
         />
 
         <Route
           path="*"
-          element={<Navigate to={user ? "/dashboard" : "/login"} />}
+          element={
+            <Navigate
+              to={
+                user
+                  ? user.role === "admin"
+                    ? "/admin"
+                    : "/dashboard"
+                  : "/login"
+              }
+            />
+          }
         />
       </Routes>
     </BrowserRouter>

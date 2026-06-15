@@ -24,6 +24,7 @@ const DashboardPage = () => {
   return (
     <DashboardLayout>
       <div className="space-y-8">
+        {/* Welcome Banner */}
         <div className="rounded-3xl bg-slate-900 text-white p-8 shadow-sm">
           <h1 className="text-4xl font-bold">Welcome back, {user.name}</h1>
 
@@ -32,6 +33,7 @@ const DashboardPage = () => {
           </p>
         </div>
 
+        {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {stats.map((stat) => (
             <Card
@@ -49,37 +51,71 @@ const DashboardPage = () => {
           ))}
         </div>
 
+        {/* Placement Status */}
         <Card className="rounded-3xl border border-slate-200 shadow-sm">
           <CardContent className="p-7">
-            <h2 className="text-xl font-semibold mb-5">Student Profile</h2>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-xl font-semibold">Placement Status</h2>
 
-            <div className="grid md:grid-cols-2 gap-4 text-slate-700">
-              <div>
-                <span className="text-slate-500">Email</span>
-
-                <p className="font-medium">{user.email}</p>
-              </div>
-
-              <div>
-                <span className="text-slate-500">Role</span>
-
-                <p className="font-medium capitalize">{user.role}</p>
-              </div>
-
-              <div>
-                <span className="text-slate-500">Scholar ID</span>
-
-                <p className="font-medium">{user.scholarId}</p>
-              </div>
-
-              <div>
-                <span className="text-slate-500">CGPA</span>
-
-                <p className="font-medium">{user.cgpa}</p>
-              </div>
+              <span
+                className={`px-4 py-2 rounded-full text-sm font-medium ${
+                  user.isPlaced
+                    ? "bg-green-100 text-green-700"
+                    : "bg-slate-100 text-slate-700"
+                }`}
+              >
+                {user.isPlaced ? "Placed" : "Unplaced"}
+              </span>
             </div>
+
+            {user.isPlaced ? (
+              <div className="grid md:grid-cols-2 gap-5">
+                <div>
+                  <p className="text-slate-500 text-sm">Company</p>
+
+                  <p className="font-semibold text-lg">
+                    {user.placedCompany || "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-slate-500 text-sm">Role</p>
+
+                  <p className="font-semibold text-lg">
+                    {user.placedRole || "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-slate-500 text-sm">CTC</p>
+
+                  <p className="font-semibold text-lg">
+                    {user.placedCTC ? `${user.placedCTC} LPA` : "N/A"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-slate-500 text-sm">Offer Type</p>
+
+                  <p className="font-semibold text-lg uppercase">
+                    {user.placementType || "N/A"}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-2xl bg-slate-50 border p-5">
+                <p className="text-lg font-medium text-slate-700">
+                  Unplaced till now
+                </p>
+
+                <p className="text-slate-500 mt-2">
+                  Keep applying to eligible companies.
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
+
       </div>
     </DashboardLayout>
   );

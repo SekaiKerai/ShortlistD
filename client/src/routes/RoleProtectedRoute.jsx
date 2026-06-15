@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
 
 const RoleProtectedRoute = ({ children, role }) => {
@@ -8,12 +9,14 @@ const RoleProtectedRoute = ({ children, role }) => {
     return <h1>Loading...</h1>;
   }
 
+  // not logged in
   if (!user) {
     return <Navigate to="/login" />;
   }
 
+  // wrong role
   if (user.role !== role) {
-    return <Navigate to="/" />;
+    return <Navigate to="/dashboard" />;
   }
 
   return children;

@@ -180,6 +180,11 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    
+    placedRole: {
+      type: String,
+      default: "",
+    },
 
     placementType: {
       type: String,
