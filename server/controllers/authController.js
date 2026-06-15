@@ -51,7 +51,7 @@ const googleLogin = async (req, res) => {
       email: normalizedEmail,
     });
 
-    // create user
+    // Create new user
     if (!user) {
       user = await User.create({
         googleId,
@@ -62,12 +62,12 @@ const googleLogin = async (req, res) => {
         scholarId: isAdmin ? undefined : null,
       });
     } else {
-      // fix old users missing googleId
+      // Fix old users missing googleId
       if (!user.googleId) {
         user.googleId = googleId;
       }
 
-      // update role if admin logs in
+      // Update role if admin logs in
       if (isAdmin && user.role !== "admin") {
         user.role = "admin";
       }
@@ -77,10 +77,14 @@ const googleLogin = async (req, res) => {
 
     const token = generateToken(user._id, user.role);
 
+    // Production-safe cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+
+      secure: process.env.NODE_ENV === "production",
+
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -136,12 +140,12 @@ const updateProfile = async (req, res) => {
       "email",
     ];
 
-    // scholarId can only be set once
+    // scholarId only once
     if (user.scholarId) {
       blockedFields.push("scholarId");
     }
 
-    // branch can only be set once
+    // branch only once
     if (user.branch) {
       blockedFields.push("branch");
     }
@@ -179,8 +183,10 @@ const updateProfile = async (req, res) => {
 const logoutUser = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+
+    secure: process.env.NODE_ENV === "production",
+
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   });
 
   return res.status(200).json({
