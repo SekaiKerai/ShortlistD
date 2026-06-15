@@ -7,6 +7,8 @@ const {
   getMyApplications,
   getCompanyApplicants,
   removeApplication,
+  exportApplicants,
+  updateApplicationStatus,
 } = require("../controllers/applicationController");
 
 const { protect, authorizeRoles } = require("../middleware/authMiddleware");
@@ -22,11 +24,25 @@ router.get(
   getCompanyApplicants,
 );
 
+router.put(
+  "/:applicationId/status",
+  protect,
+  authorizeRoles("admin"),
+  updateApplicationStatus,
+);
+
 router.delete(
   "/:applicationId",
   protect,
   authorizeRoles("admin"),
   removeApplication,
+);
+
+router.get(
+  "/company/:companyId/export",
+  protect,
+  authorizeRoles("admin"),
+  exportApplicants,
 );
 
 module.exports = router;

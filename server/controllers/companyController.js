@@ -6,6 +6,8 @@ const User = require("../models/User");
 
 const Application = require("../models/Application");
 
+const ExcelJS = require("exceljs");
+
 const createCompany = async (req, res) => {
   try {
     const company = await Company.create({
@@ -126,6 +128,126 @@ const getEligibleStudents = async (req, res) => {
   }
 };
 
+const exportEligibleStudents = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+
+    const company = await Company.findById(companyId);
+
+    if (!company) {
+      return res.status(404).json({
+        success: false,
+        message: "Company not found",
+      });
+    }
+
+    const students = await User.find({
+      role: "student",
+    });
+
+    const eligibleStudents = students.filter((student) => {
+      const branchEligible = company.eligibleBranches.includes(student.branch);
+
+      const cgpaEligible = student.cgpa >= company.minimumCGPA;
+
+      const backlogEligible = student.backlogs <= company.allowedBacklogs;
+
+      const graduationEligible = company.eligibleGraduationYears.includes(
+        student.graduationYear,
+      );
+
+      return (
+        branchEligible && cgpaEligible && backlogEligible && graduationEligible
+      );
+    });
+
+    const workbook = new ExcelJS.Workbook();
+
+    const worksheet = workbook.addWorksheet("Eligible Students");
+
+    worksheet.columns = [
+      {
+        header: "Name",
+        key: "name",
+        width: 25,
+      },
+      {
+        header: "Scholar ID",
+        key: "scholarId",
+        width: 20,
+      },
+      {
+        header: "Email",
+        key: "email",
+        width: 30,
+      },
+      {
+        header: "Branch",
+        key: "branch",
+        width: 15,
+      },
+      {
+        header: "CGPA",
+        key: "cgpa",
+        width: 10,
+      },
+      {
+        header: "Backlogs",
+        key: "backlogs",
+        width: 12,
+      },
+      {
+        header: "Resume",
+        key: "resumeDriveLink",
+        width: 40,
+      },
+      {
+        header: "Github",
+        key: "github",
+        width: 30,
+      },
+      {
+        header: "LinkedIn",
+        key: "linkedin",
+        width: 30,
+      },
+    ];
+
+    eligibleStudents.forEach((student) => {
+      worksheet.addRow({
+        name: student.name,
+        scholarId: student.scholarId,
+        email: student.email,
+        branch: student.branch,
+        cgpa: student.cgpa,
+        backlogs: student.backlogs,
+        resumeDriveLink: student.resumeDriveLink,
+        github: student.github,
+        linkedin: student.linkedin,
+      });
+    });
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${company.companyName}_Eligible_Students.xlsx`,
+    );
+
+    await workbook.xlsx.write(res);
+
+    res.end();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const updateCompany = async (req, res) => {
   try {
     const { companyId } = req.params;
@@ -166,4 +288,5 @@ module.exports = {
   getCompanies,
   updateCompany,
   getEligibleStudents,
+  exportEligibleStudents,
 };

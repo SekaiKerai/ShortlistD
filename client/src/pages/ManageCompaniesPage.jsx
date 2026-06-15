@@ -28,7 +28,6 @@ const ManageCompaniesPage = () => {
 
       setCompanies(res.data.companies);
 
-      // fetch eligibility stats
       const stats = {};
 
       await Promise.all(
@@ -110,8 +109,8 @@ const ManageCompaniesPage = () => {
 
   const filteredCompanies = companies.filter(
     (company) =>
-      company.companyName.toLowerCase().includes(search.toLowerCase()) ||
-      company.role.toLowerCase().includes(search.toLowerCase()),
+      company.companyName?.toLowerCase().includes(search.toLowerCase()) ||
+      company.role?.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -136,6 +135,10 @@ const ManageCompaniesPage = () => {
           <div className="bg-white rounded-3xl border p-10 text-center">
             Loading...
           </div>
+        ) : filteredCompanies.length === 0 ? (
+          <div className="bg-white rounded-3xl border p-10 text-center text-slate-500">
+            No companies found
+          </div>
         ) : (
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
             {filteredCompanies.map((company) => (
@@ -154,6 +157,24 @@ const ManageCompaniesPage = () => {
 
                   <p>
                     <strong>Offer:</strong> {company.offerType}
+                  </p>
+
+                  <p>
+                    <strong>Deadline:</strong>{" "}
+                    {new Date(company.applicationDeadline).toLocaleDateString()}
+                  </p>
+
+                  <p>
+                    <strong>Status:</strong>{" "}
+                    <span
+                      className={`font-medium ${
+                        company.status === "open"
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {company.status}
+                    </span>
                   </p>
                 </div>
 
@@ -200,6 +221,7 @@ const ManageCompaniesPage = () => {
                         })
                       }
                       className="border rounded-xl p-3 w-full"
+                      placeholder="Allowed Backlogs"
                     />
 
                     <input
@@ -258,6 +280,24 @@ const ManageCompaniesPage = () => {
                     >
                       View Eligible Students
                     </Link>
+
+                    <a
+                      href={`${import.meta.env.VITE_API_BASE_URL}/company/${company._id}/export-eligible`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="border border-slate-300 py-3 rounded-xl text-center"
+                    >
+                      Export Eligible
+                    </a>
+
+                    <a
+                      href={`${import.meta.env.VITE_API_BASE_URL}/application/company/${company._id}/export`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="border border-slate-300 py-3 rounded-xl text-center"
+                    >
+                      Export Applicants
+                    </a>
                   </div>
                 )}
               </div>

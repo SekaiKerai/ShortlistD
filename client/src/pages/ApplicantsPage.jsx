@@ -12,6 +12,8 @@ const ApplicantsPage = () => {
 
   const [applicants, setApplicants] = useState([]);
 
+  const [selectedIds, setSelectedIds] = useState([]);
+
   const [search, setSearch] = useState("");
 
   const [loading, setLoading] = useState(true);
@@ -26,7 +28,6 @@ const ApplicantsPage = () => {
       );
 
       setCompany(res.data.company);
-
       setApplicants(res.data.applications);
     } catch (error) {
       console.log(error);
@@ -60,6 +61,95 @@ const ApplicantsPage = () => {
     }
   };
 
+  const handleStatusChange = async (applicationId, status) => {
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/application/${applicationId}/status`,
+        {
+          status,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      fetchApplicants();
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to update status");
+    }
+  };
+
+  const handleBulkMove = async (targetStatus) => {
+    if (selectedIds.length === 0) {
+      return alert("Select at least one student");
+    }
+
+    try {
+      // update selected
+      await Promise.all(
+        selectedIds.map((id) =>
+          axios.put(
+            `${import.meta.env.VITE_API_BASE_URL}/application/${id}/status`,
+            {
+              status: targetStatus,
+            },
+            {
+              withCredentials: true,
+            },
+          ),
+        ),
+      );
+
+      // OA special logic
+      if (targetStatus === "oa") {
+        const unselected = applicants.filter(
+          (app) => !selectedIds.includes(app._id) && app.status === "applied",
+        );
+
+        await Promise.all(
+          unselected.map((app) =>
+            axios.put(
+              `${import.meta.env.VITE_API_BASE_URL}/application/${app._id}/status`,
+              {
+                status: "rejected",
+              },
+              {
+                withCredentials: true,
+              },
+            ),
+          ),
+        );
+      }
+
+      alert(`Moved students to ${targetStatus.toUpperCase()}`);
+
+      setSelectedIds([]);
+
+      fetchApplicants();
+    } catch (error) {
+      alert(error.response?.data?.message || "Bulk update failed");
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "selected":
+        return "bg-green-100 text-green-700";
+
+      case "rejected":
+        return "bg-red-100 text-red-700";
+
+      case "interview":
+        return "bg-blue-100 text-blue-700";
+
+      case "oa":
+        return "bg-purple-100 text-purple-700";
+
+      default:
+        return "bg-slate-100 text-slate-700";
+    }
+  };
+
   const filteredApplicants = applicants.filter((application) => {
     const student = application.student;
 
@@ -81,6 +171,37 @@ const ApplicantsPage = () => {
           <p className="text-slate-500 mt-1">
             {company?.companyName} — {company?.role}
           </p>
+        </div>
+
+        {/* Bulk Actions */}
+        <div className="bg-white border rounded-3xl p-4 flex flex-wrap gap-3">
+          <button
+            onClick={() => handleBulkMove("oa")}
+            className="bg-purple-600 text-white px-5 py-2 rounded-xl"
+          >
+            Move to OA
+          </button>
+
+          <button
+            onClick={() => handleBulkMove("interview")}
+            className="bg-blue-600 text-white px-5 py-2 rounded-xl"
+          >
+            Move to Interview
+          </button>
+
+          <button
+            onClick={() => handleBulkMove("selected")}
+            className="bg-green-600 text-white px-5 py-2 rounded-xl"
+          >
+            Mark Selected
+          </button>
+
+          <button
+            onClick={() => handleBulkMove("rejected")}
+            className="bg-red-600 text-white px-5 py-2 rounded-xl"
+          >
+            Reject Selected
+          </button>
         </div>
 
         <input
@@ -109,19 +230,49 @@ const ApplicantsPage = () => {
                   key={application._id}
                   className="bg-white border rounded-3xl p-6 shadow-sm"
                 >
-                  <div className="flex justify-between">
-                    <div>
-                      <h2 className="text-xl font-bold">{student?.name}</h2>
+                  <div className="flex justify-between gap-4">
+                    <div className="flex gap-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(application._id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedIds((prev) => [
+                              ...prev,
+                              application._id,
+                            ]);
+                          } else {
+                            setSelectedIds((prev) =>
+                              prev.filter((id) => id !== application._id),
+                            );
+                          }
+                        }}
+                        className="mt-2 w-5 h-5"
+                      />
 
-                      <p className="text-slate-500">{student?.email}</p>
+                      <div>
+                        <h2 className="text-xl font-bold">{student?.name}</h2>
+
+                        <p className="text-slate-500">{student?.email}</p>
+                      </div>
                     </div>
 
-                    <button
-                      onClick={() => handleDebar(application._id)}
-                      className="bg-red-600 text-white px-4 py-2 rounded-xl"
-                    >
-                      Debar
-                    </button>
+                    <div className="flex flex-col items-end gap-3">
+                      <span
+                        className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
+                          application.status,
+                        )}`}
+                      >
+                        {application.status.toUpperCase()}
+                      </span>
+
+                      <button
+                        onClick={() => handleDebar(application._id)}
+                        className="bg-red-600 text-white px-4 py-2 rounded-xl"
+                      >
+                        Debar
+                      </button>
+                    </div>
                   </div>
 
                   <div className="grid md:grid-cols-3 gap-4 mt-5 text-sm">
@@ -136,6 +287,30 @@ const ApplicantsPage = () => {
                     <p>
                       <strong>CGPA:</strong> {student?.cgpa ?? "N/A"}
                     </p>
+                  </div>
+
+                  <div className="mt-5">
+                    <label className="text-sm font-medium text-slate-600">
+                      Update Status
+                    </label>
+
+                    <select
+                      value={application.status}
+                      onChange={(e) =>
+                        handleStatusChange(application._id, e.target.value)
+                      }
+                      className="w-full mt-2 border rounded-xl p-3"
+                    >
+                      <option value="applied">Applied</option>
+
+                      <option value="oa">OA</option>
+
+                      <option value="interview">Interview</option>
+
+                      <option value="selected">Selected</option>
+
+                      <option value="rejected">Rejected</option>
+                    </select>
                   </div>
                 </div>
               );
