@@ -158,35 +158,95 @@ const ProfilePage = () => {
 
   return (
     <DashboardLayout>
-      <div className="max-w-4xl mx-auto bg-white border rounded-3xl p-8 shadow-sm">
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Profile</h1>
+      <div className="max-w-5xl mx-auto space-y-8">
+        <div
+          className="
+  rounded-[2rem]
+  bg-[#E9DFD2]
+  border
+  border-[#DDD2C4]
+  p-8
+"
+        >
+          <div className="flex justify-between items-start gap-6 flex-wrap">
+            <div>
+              <p className="uppercase tracking-[0.18em] text-[#9A876F] text-sm font-semibold">
+                Student Profile
+              </p>
 
-            <p className="text-slate-500 mt-1">Manage your profile</p>
+              <h1 className="text-[2.5rem] font-black text-[#231F1B] mt-3">
+                {user?.name}
+              </h1>
+
+              <p className="text-[#6D645A] mt-3 text-lg">
+                Keep your academic and placement profile updated.
+              </p>
+            </div>
+
+            {!isEditing && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="
+        bg-[#231F1B]
+        text-[#F7F2EA]
+        px-6
+        py-4
+        rounded-[1.4rem]
+        font-semibold
+        hover:opacity-90
+        transition-all
+      "
+              >
+                Edit Profile
+              </button>
+            )}
           </div>
-
-          {!isEditing && (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="bg-slate-900 text-white px-5 py-2 rounded-xl"
-            >
-              Edit Profile
-            </button>
-          )}
         </div>
 
         {/* Completion */}
-        <div className="mb-8">
-          <div className="flex justify-between mb-2">
-            <span className="font-medium">Profile Completion</span>
+        <div
+          className="
+  mb-8
+  bg-[#FBF7F1]
+  border
+  border-[#DED3C6]
+  rounded-[2rem]
+  p-7
+"
+        >
+          <div className="flex justify-between items-start mb-5">
+            <div>
+              <h2 className="text-xl font-bold text-[#231F1B]">
+                Profile Completion
+              </h2>
 
-            <span className="font-semibold">{completion}%</span>
+              <p className="text-sm text-[#746B60] mt-1">
+                Complete your profile to improve placement eligibility.
+              </p>
+            </div>
+
+            <span className="text-2xl font-black text-[#231F1B]">
+              {completion}%
+            </span>
           </div>
 
-          <div className="w-full h-3 rounded-full bg-slate-200 overflow-hidden">
+          <div
+            className="
+    w-full
+    h-4
+    rounded-full
+    bg-[#E5DACB]
+    overflow-hidden
+  "
+          >
             <div
-              className="h-full bg-slate-900 transition-all"
+              className="
+      h-full
+      bg-[#C27A50]
+      transition-all
+      duration-500
+      rounded-full
+    "
               style={{
                 width: `${completion}%`,
               }}
@@ -195,88 +255,190 @@ const ProfilePage = () => {
         </div>
 
         {!isEditing ? (
-          <div className="space-y-8">
+          <div className="space-y-6">
             {/* Basic */}
-            <div>
-              <h2 className="font-semibold text-lg mb-3">Basic Information</h2>
+            <div
+              className="
+      bg-[#FBF7F1]
+      border
+      border-[#DED3C6]
+      rounded-[2rem]
+      p-7
+    "
+            >
+              <h2 className="text-2xl font-black text-[#231F1B] mb-5">
+                Basic Information
+              </h2>
 
               <div className="grid md:grid-cols-2 gap-4">
-                <p>
-                  <strong>Name:</strong> {user?.name}
-                </p>
+                {[
+                  {
+                    label: "Name",
+                    value: user?.name,
+                  },
+                  {
+                    label: "Email",
+                    value: user?.email,
+                  },
+                  {
+                    label: "Scholar ID",
+                    value: user?.scholarId || "Not added",
+                  },
+                  {
+                    label: "Branch",
+                    value: user?.branch || "Not added",
+                  },
+                  {
+                    label: "Graduation Year",
+                    value: user?.graduationYear || "Not added",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="
+      bg-[#F4ECE2]
+      border
+      border-[#E4D7C8]
+      rounded-[1.5rem]
+      p-5
+    "
+                  >
+                    <p className="text-sm text-[#8B8072]">{item.label}</p>
 
-                <p>
-                  <strong>Email:</strong> {user?.email}
-                </p>
-
-                <p>
-                  <strong>Scholar ID:</strong> {user?.scholarId || "Not added"}
-                </p>
-                <p>
-                  <strong>Branch:</strong> {user?.branch || "Not added"}
-                </p>
-                <p>
-                  <strong>Graduation Year:</strong>{" "}
-                  {user?.graduationYear || "Not added"}
-                </p>
+                    <h3 className="text-lg font-bold text-[#231F1B] mt-2 break-words">
+                      {item.value}
+                    </h3>
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Academic */}
-            <div>
-              <h2 className="font-semibold text-lg mb-3">Academic</h2>
+            <div
+              className="
+  bg-[#FBF7F1]
+  border
+  border-[#DED3C6]
+  rounded-[2rem]
+  p-7
+"
+            >
+              <h2 className="text-2xl font-black text-[#231F1B] mb-5">
+                Academic Information
+              </h2>
+
+              <p className="text-[#746B60] mb-6">
+                Academic details used for eligibility checks.
+              </p>
 
               <div className="grid md:grid-cols-2 gap-4">
-                <p>
-                  <strong>CGPA:</strong> {user?.cgpa ?? "Not added"}
-                </p>
+                {[
+                  {
+                    label: "CGPA",
+                    value: user?.cgpa ?? "Not added",
+                  },
+                  {
+                    label: "Backlogs",
+                    value: user?.backlogs ?? "Not added",
+                  },
+                  {
+                    label: "10th Percentage",
+                    value: user?.class10Percentage ?? "Not added",
+                  },
+                  {
+                    label: "12th Percentage",
+                    value: user?.class12Percentage ?? "Not added",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="
+        bg-[#F4ECE2]
+        border
+        border-[#E4D7C8]
+        rounded-[1.5rem]
+        p-5
+        transition-all
+        duration-300
+        hover:shadow-sm
+      "
+                  >
+                    <p className="text-sm text-[#8B8072]">{item.label}</p>
 
-                <p>
-                  <strong>Backlogs:</strong> {user?.backlogs ?? "Not added"}
-                </p>
-
-                <p>
-                  <strong>10th %:</strong>{" "}
-                  {user?.class10Percentage ?? "Not added"}
-                </p>
-
-                <p>
-                  <strong>12th %:</strong>{" "}
-                  {user?.class12Percentage ?? "Not added"}
-                </p>
+                    <h3 className="text-xl font-bold text-[#231F1B] mt-2">
+                      {item.value}
+                    </h3>
+                  </div>
+                ))}
               </div>
             </div>
             {/* Skills */}
-            <div>
-              <h2 className="font-semibold text-lg mb-3">Skills</h2>
+            <div
+              className="
+      bg-[#FBF7F1]
+      border
+      border-[#DED3C6]
+      rounded-[2rem]
+      p-7
+    "
+            >
+              <h2 className="text-2xl font-black text-[#231F1B] mb-5">
+                Skills
+              </h2>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {user?.skills?.length > 0 ? (
                   user.skills.map((skill) => (
                     <span
                       key={skill}
-                      className="bg-slate-900 text-white px-4 py-2 rounded-full"
+                      className="
+              bg-[#EFE4D7]
+              text-[#5C544B]
+              px-5
+              py-2
+              rounded-full
+              font-medium
+            "
                     >
                       {skill}
                     </span>
                   ))
                 ) : (
-                  <p className="text-slate-500">No skills added</p>
+                  <p className="text-[#746B60]">No skills added</p>
                 )}
               </div>
             </div>
 
             {/* Links */}
-            <div>
-              <h2 className="font-semibold text-lg mb-3">Resume & Links</h2>
+            <div
+              className="
+      bg-[#FBF7F1]
+      border
+      border-[#DED3C6]
+      rounded-[2rem]
+      p-7
+    "
+            >
+              <h2 className="text-2xl font-black text-[#231F1B] mb-5">
+                Resume & Links
+              </h2>
 
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-4">
                 {user?.resumeDriveLink && (
                   <a
                     href={user.resumeDriveLink}
                     target="_blank"
                     rel="noreferrer"
-                    className="bg-slate-900 text-white px-4 py-2 rounded-xl"
+                    className="
+            bg-[#231F1B]
+            text-[#F7F2EA]
+            px-5
+            py-3
+            rounded-[1.2rem]
+            font-medium
+            hover:opacity-90
+            transition-all
+          "
                   >
                     View Resume
                   </a>
@@ -287,7 +449,16 @@ const ProfilePage = () => {
                     href={user.github}
                     target="_blank"
                     rel="noreferrer"
-                    className="border px-4 py-2 rounded-xl"
+                    className="
+            border
+            border-[#D8CCBD]
+            bg-[#FBF7F1]
+            px-5
+            py-3
+            rounded-[1.2rem]
+            hover:bg-[#F3ECE2]
+            transition-all
+          "
                   >
                     GitHub
                   </a>
@@ -298,7 +469,16 @@ const ProfilePage = () => {
                     href={user.linkedin}
                     target="_blank"
                     rel="noreferrer"
-                    className="border px-4 py-2 rounded-xl"
+                    className="
+            border
+            border-[#D8CCBD]
+            bg-[#FBF7F1]
+            px-5
+            py-3
+            rounded-[1.2rem]
+            hover:bg-[#F3ECE2]
+            transition-all
+          "
                   >
                     LinkedIn
                   </a>
@@ -308,127 +488,129 @@ const ProfilePage = () => {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-5">
-              <input
-                type="text"
-                name="scholarId"
-                placeholder="Scholar ID"
-                value={formData.scholarId}
-                onChange={handleChange}
-                disabled={!!user?.scholarId}
-                className={`border rounded-xl p-3 ${
-                  user?.scholarId ? "bg-slate-100 cursor-not-allowed" : ""
-                }`}
-              />
+            <div
+              className="
+      bg-[#FBF7F1]
+      border
+      border-[#DED3C6]
+      rounded-[2rem]
+      p-7
+    "
+            >
+              <div className="grid md:grid-cols-2 gap-5">
+                <input
+                  type="text"
+                  name="scholarId"
+                  placeholder="Scholar ID"
+                  value={formData.scholarId}
+                  onChange={handleChange}
+                  disabled={!!user?.scholarId}
+                  className={`
+          w-full
+          rounded-[1.3rem]
+          border
+          border-[#DDD1C3]
+          bg-[#F9F4ED]
+          px-5
+          py-4
+          outline-none
+          ${user?.scholarId ? "opacity-60 cursor-not-allowed" : ""}
+        `}
+                />
 
-              <select
-                name="branch"
-                value={formData.branch}
-                onChange={handleChange}
-                disabled={!!user?.branch}
-                className={`border rounded-xl p-3 ${
-                  user?.branch ? "bg-slate-100 cursor-not-allowed" : ""
-                }`}
-              >
-                <option value="">Select Branch</option>
+                <select
+                  name="branch"
+                  value={formData.branch}
+                  onChange={handleChange}
+                  disabled={!!user?.branch}
+                  className={`
+          w-full
+          rounded-[1.3rem]
+          border
+          border-[#DDD1C3]
+          bg-[#F9F4ED]
+          px-5
+          py-4
+          outline-none
+          ${user?.branch ? "opacity-60 cursor-not-allowed" : ""}
+        `}
+                >
+                  <option value="">Select Branch</option>
+                  <option value="CE">CE</option>
+                  <option value="CSE">CSE</option>
+                  <option value="ECE">ECE</option>
+                  <option value="EE">EE</option>
+                  <option value="EIE">EIE</option>
+                  <option value="ME">ME</option>
+                </select>
 
-                <option value="CE">CE</option>
-
-                <option value="CSE">CSE</option>
-
-                <option value="ECE">ECE</option>
-
-                <option value="EE">EE</option>
-
-                <option value="EIE">EIE</option>
-
-                <option value="ME">ME</option>
-              </select>
-              <input
-                type="number"
-                step="0.01"
-                name="cgpa"
-                placeholder="CGPA"
-                value={formData.cgpa}
-                onChange={handleChange}
-                className="border rounded-xl p-3"
-              />
-
-              <input
-                type="number"
-                name="backlogs"
-                placeholder="Backlogs"
-                value={formData.backlogs}
-                onChange={handleChange}
-                className="border rounded-xl p-3"
-              />
-
-              <input
-                type="number"
-                name="graduationYear"
-                placeholder="Graduation Year"
-                value={formData.graduationYear}
-                onChange={handleChange}
-                className="border rounded-xl p-3"
-              />
-
-              <input
-                type="number"
-                step="0.01"
-                name="class10Percentage"
-                placeholder="10th %"
-                value={formData.class10Percentage}
-                onChange={handleChange}
-                className="border rounded-xl p-3"
-              />
-
-              <input
-                type="number"
-                step="0.01"
-                name="class12Percentage"
-                placeholder="12th %"
-                value={formData.class12Percentage}
-                onChange={handleChange}
-                className="border rounded-xl p-3"
-              />
-
-              <input
-                type="url"
-                name="resumeDriveLink"
-                placeholder="Resume Link"
-                value={formData.resumeDriveLink}
-                onChange={handleChange}
-                className="border rounded-xl p-3"
-              />
-
-              <input
-                type="url"
-                name="github"
-                placeholder="GitHub"
-                value={formData.github}
-                onChange={handleChange}
-                className="border rounded-xl p-3"
-              />
-
-              <input
-                type="url"
-                name="linkedin"
-                placeholder="LinkedIn"
-                value={formData.linkedin}
-                onChange={handleChange}
-                className="border rounded-xl p-3"
-              />
+                {[
+                  "cgpa",
+                  "backlogs",
+                  "graduationYear",
+                  "class10Percentage",
+                  "class12Percentage",
+                  "resumeDriveLink",
+                  "github",
+                  "linkedin",
+                ].map((field) => (
+                  <input
+                    key={field}
+                    type={
+                      field.includes("Link") ||
+                      field === "github" ||
+                      field === "linkedin"
+                        ? "url"
+                        : "text"
+                    }
+                    name={field}
+                    placeholder={field}
+                    value={formData[field]}
+                    onChange={handleChange}
+                    className="
+            w-full
+            rounded-[1.3rem]
+            border
+            border-[#DDD1C3]
+            bg-[#F9F4ED]
+            px-5
+            py-4
+            outline-none
+          "
+                  />
+                ))}
+              </div>
             </div>
 
             {/* Skills */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Skills</h2>
+            <div
+              className="
+      bg-[#FBF7F1]
+      border
+      border-[#DED3C6]
+      rounded-[2rem]
+      p-7
+    "
+            >
+              <h2 className="text-2xl font-black text-[#231F1B] mb-5">
+                Skills
+              </h2>
 
-              <div className="flex flex-wrap gap-2 mb-4">
+              <div className="flex flex-wrap gap-3 mb-5">
                 {formData.skills.map((skill) => (
                   <div
                     key={skill}
-                    className="bg-slate-900 text-white px-4 py-2 rounded-full flex items-center gap-2"
+                    className="
+              bg-[#EFE4D7]
+              text-[#5C544B]
+              px-5
+              py-2
+              rounded-full
+              flex
+              items-center
+              gap-2
+              font-medium
+            "
                   >
                     <span>{skill}</span>
 
@@ -445,24 +627,47 @@ const ProfilePage = () => {
                   placeholder="Add skill"
                   value={skillInput}
                   onChange={(e) => setSkillInput(e.target.value)}
-                  className="border rounded-xl p-3 flex-1"
+                  className="
+          flex-1
+          rounded-[1.3rem]
+          border
+          border-[#DDD1C3]
+          bg-[#F9F4ED]
+          px-5
+          py-4
+          outline-none
+        "
                 />
 
                 <button
                   type="button"
                   onClick={addSkill}
-                  className="bg-slate-900 text-white px-5 rounded-xl"
+                  className="
+          bg-[#231F1B]
+          text-[#F7F2EA]
+          px-6
+          rounded-[1.3rem]
+          font-medium
+        "
                 >
                   Add
                 </button>
               </div>
             </div>
 
-            <div className="flex gap-3">
+            {/* Buttons */}
+            <div className="flex gap-4">
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-slate-900 text-white px-6 py-3 rounded-xl"
+                className="
+        bg-[#231F1B]
+        text-[#F7F2EA]
+        px-7
+        py-4
+        rounded-[1.3rem]
+        font-semibold
+      "
               >
                 {loading ? "Saving..." : "Save Changes"}
               </button>
@@ -470,7 +675,16 @@ const ProfilePage = () => {
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="border px-6 py-3 rounded-xl"
+                className="
+        border
+        border-[#D8CCBD]
+        bg-[#FBF7F1]
+        px-7
+        py-4
+        rounded-[1.3rem]
+        hover:bg-[#F3ECE2]
+        transition-all
+      "
               >
                 Cancel
               </button>

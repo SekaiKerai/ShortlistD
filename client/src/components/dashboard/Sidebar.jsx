@@ -8,6 +8,7 @@ import {
   Briefcase,
   Bell,
   BarChart3,
+  ChevronRight,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
@@ -76,14 +77,74 @@ const Sidebar = () => {
   const menuItems = user?.role === "admin" ? adminMenuItems : studentMenuItems;
 
   return (
-    <aside className="w-72 h-screen bg-white border-r border-slate-200 flex flex-col px-5 py-6">
+    <aside
+      className="
+      w-72
+      h-screen
+      sticky
+      top-0
+      shrink-0
+      bg-[#F4EFE7]
+      border-r
+      border-[#DED6C8]
+      flex
+      flex-col
+      px-5
+      py-6
+      shadow-sm
+      overflow-y-auto
+    "
+    >
+      {/* Branding */}
       <div className="mb-10">
-        <h1 className="text-2xl font-bold">ShortlistD</h1>
+        <div className="flex items-center gap-4">
+          <div
+            className="
+            w-14 h-14
+            rounded-[1.3rem]
+            bg-[#23211D]
+            flex items-center justify-center
+            shadow-md
+          "
+          >
+            <Briefcase className="text-[#F4EFE7]" size={24} />
+          </div>
 
-        <p className="text-sm text-slate-500 mt-1">Placement Portal</p>
+          <div>
+            <h1 className="text-2xl font-black text-[#23211D] tracking-tight">
+              ShortlistD
+            </h1>
+
+            <p className="text-sm text-[#746C61]">Placement Portal</p>
+          </div>
+        </div>
       </div>
 
-      <nav className="flex flex-col gap-2">
+      {/* Role Badge */}
+      <div className="mb-8">
+        <div
+          className="
+          rounded-[1.5rem]
+          border
+          border-[#D7CEBF]
+          bg-[#FBF8F3]
+          p-4
+        "
+        >
+          <p className="text-xs uppercase tracking-[0.18em] text-[#9C8B74] font-semibold">
+            Logged In As
+          </p>
+
+          <h3 className="mt-2 font-bold text-[#23211D] text-lg capitalize">
+            {user?.role}
+          </h3>
+
+          <p className="text-sm text-[#726A5E] mt-1 truncate">{user?.email}</p>
+        </div>
+      </div>
+
+      {/* Menu */}
+      <nav className="flex flex-col gap-3 flex-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
 
@@ -93,20 +154,68 @@ const Sidebar = () => {
               to={item.path}
               end={item.path === "/admin"}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
+                `
+                group
+                flex
+                items-center
+                justify-between
+                px-5
+                py-4
+                rounded-[1.4rem]
+                transition-all
+                duration-300
+                ${
                   isActive
-                    ? "bg-slate-900 text-white"
-                    : "text-slate-700 hover:bg-slate-100"
-                }`
+                    ? `
+                    bg-[#23211D]
+                    text-[#F4EFE7]
+                    shadow-lg
+                    scale-[1.02]
+                  `
+                    : `
+                    text-[#534B41]
+                    hover:bg-[#ECE3D5]
+                    hover:translate-x-1
+                  `
+                }
+              `
               }
             >
-              <Icon size={20} />
+              <div className="flex items-center gap-4">
+                <Icon size={21} />
 
-              {item.name}
+                <span className="font-medium">{item.name}</span>
+              </div>
+
+              <ChevronRight size={18} className="opacity-50" />
             </NavLink>
           );
         })}
       </nav>
+
+      {/* Footer */}
+      <div
+        className="
+        mt-6
+        rounded-[1.8rem]
+        bg-[#E9E1D4]
+        border
+        border-[#D7CEBF]
+        p-5
+      "
+      >
+        <p className="text-sm text-[#7A7267]">
+          Keep checking regularly for placement updates.
+        </p>
+
+        <div className="mt-3 flex gap-2">
+          <div className="w-2 h-2 rounded-full bg-[#D08A5A] animate-pulse" />
+
+          <span className="text-sm font-medium text-[#23211D]">
+            Opportunities active
+          </span>
+        </div>
+      </div>
     </aside>
   );
 };

@@ -3,6 +3,14 @@ import { useEffect, useState } from "react";
 
 import DashboardLayout from "@/layout/DashboardLayout";
 
+import {
+  Search,
+  BriefcaseBusiness,
+  Clock3,
+  CircleCheckBig,
+  CircleX,
+} from "lucide-react";
+
 const ApplicationsPage = () => {
   const [applications, setApplications] = useState([]);
 
@@ -40,13 +48,32 @@ const ApplicationsPage = () => {
         return "bg-red-100 text-red-700";
 
       case "interview":
-        return "bg-blue-100 text-blue-700";
+        return "bg-[#E8E1D6] text-[#8A633B]";
 
       case "oa":
-        return "bg-purple-100 text-purple-700";
+        return "bg-[#F4E7D8] text-[#A05E2A]";
 
       default:
-        return "bg-slate-100 text-slate-700";
+        return "bg-[#EAE1D5] text-[#5D564C]";
+    }
+  };
+
+  const getStageText = (status) => {
+    switch (status) {
+      case "oa":
+        return "Online Assessment";
+
+      case "interview":
+        return "Interview Round";
+
+      case "selected":
+        return "Selected 🎉";
+
+      case "rejected":
+        return "Rejected";
+
+      default:
+        return "Application Submitted";
     }
   };
 
@@ -73,86 +100,213 @@ const ApplicationsPage = () => {
     rejected: applications.filter((app) => app.status === "rejected").length,
   };
 
+  const statCards = [
+    {
+      title: "Applications",
+      value: stats.total,
+      icon: BriefcaseBusiness,
+    },
+    {
+      title: "In Process",
+      value: stats.inProcess,
+      icon: Clock3,
+    },
+    {
+      title: "Selected",
+      value: stats.selected,
+      icon: CircleCheckBig,
+    },
+    {
+      title: "Rejected",
+      value: stats.rejected,
+      icon: CircleX,
+    },
+  ];
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold">My Applications</h1>
+        {/* Hero */}
+        <div
+          className="
+          rounded-[2rem]
+          bg-[#E9DFD2]
+          border
+          border-[#DDD2C4]
+          p-8
+        "
+        >
+          <p className="uppercase tracking-[0.18em] text-[#9A876F] text-sm font-semibold">
+            Placement Journey
+          </p>
 
-          <p className="text-slate-500 mt-1">Track your placement journey</p>
+          <h1 className="text-[2.5rem] font-black text-[#231F1B] mt-3">
+            My Applications
+          </h1>
+
+          <p className="text-[#6D645A] mt-3 text-lg">
+            Track every placement drive, interview and selection update.
+          </p>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white border rounded-3xl p-5 shadow-sm">
-            <p className="text-slate-500 text-sm">Total</p>
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+          {statCards.map((card) => {
+            const Icon = card.icon;
 
-            <h2 className="text-3xl font-bold mt-2">{stats.total}</h2>
-          </div>
+            return (
+              <div
+                key={card.title}
+                className="
+                  rounded-[2rem]
+                  bg-[#FBF7F1]
+                  border
+                  border-[#DED3C6]
+                  p-6
+                "
+              >
+                <div className="flex justify-between">
+                  <div>
+                    <p className="text-sm text-[#7A7064]">{card.title}</p>
 
-          <div className="bg-white border rounded-3xl p-5 shadow-sm">
-            <p className="text-slate-500 text-sm">In Process</p>
+                    <h2 className="text-4xl font-black text-[#231F1B] mt-3">
+                      {card.value}
+                    </h2>
+                  </div>
 
-            <h2 className="text-3xl font-bold mt-2 text-blue-600">
-              {stats.inProcess}
-            </h2>
-          </div>
-
-          <div className="bg-white border rounded-3xl p-5 shadow-sm">
-            <p className="text-slate-500 text-sm">Selected</p>
-
-            <h2 className="text-3xl font-bold mt-2 text-green-600">
-              {stats.selected}
-            </h2>
-          </div>
-
-          <div className="bg-white border rounded-3xl p-5 shadow-sm">
-            <p className="text-slate-500 text-sm">Rejected</p>
-
-            <h2 className="text-3xl font-bold mt-2 text-red-600">
-              {stats.rejected}
-            </h2>
-          </div>
+                  <div
+                    className="
+                      w-14 h-14
+                      rounded-[1.2rem]
+                      bg-[#EFE5D7]
+                      flex
+                      items-center
+                      justify-center
+                    "
+                  >
+                    <Icon size={24} className="text-[#B67542]" />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         {/* Search */}
-        <input
-          type="text"
-          placeholder="Search company or role..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full border rounded-2xl p-4"
-        />
+        <div
+          className="
+          relative
+          bg-[#FBF7F1]
+          border
+          border-[#DED3C6]
+          rounded-[1.8rem]
+          p-2
+        "
+        >
+          <Search
+            size={20}
+            className="
+            absolute
+            left-6
+            top-1/2
+            -translate-y-1/2
+            text-[#9B8F81]
+          "
+          />
 
+          <input
+            type="text"
+            placeholder="Search company or role..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="
+            w-full
+            bg-transparent
+            pl-14
+            pr-4
+            py-4
+            outline-none
+          "
+          />
+        </div>
+
+        {/* Cards */}
         {loading ? (
-          <div className="bg-white rounded-3xl border p-10 text-center">
-            Loading...
+          <div
+            className="
+            bg-[#FBF7F1]
+            border
+            border-[#DED3C6]
+            rounded-[2rem]
+            p-14
+            text-center
+          "
+          >
+            Loading applications...
           </div>
         ) : filteredApplications.length === 0 ? (
-          <div className="bg-white rounded-3xl border p-10 text-center text-slate-500">
-            No applications found
+          <div
+            className="
+            bg-[#FBF7F1]
+            border
+            border-[#DED3C6]
+            rounded-[2rem]
+            p-14
+            text-center
+          "
+          >
+            <h3 className="text-xl font-bold text-[#231F1B]">
+              No applications found
+            </h3>
+
+            <p className="text-[#6F675C] mt-2">Try changing your search.</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredApplications.map((application) => {
               const company = application.company;
 
               return (
                 <div
                   key={application._id}
-                  className="bg-white border rounded-3xl p-6 shadow-sm hover:shadow-md transition"
+                  className="
+                    bg-[#FBF7F1]
+                    border
+                    border-[#DED3C6]
+                    rounded-[2rem]
+                    p-6
+                    hover:shadow-md
+                    transition-all
+                    duration-300
+                  "
                 >
-                  <div className="flex justify-between items-start">
+                  <div className="flex justify-between gap-4">
                     <div>
-                      <h2 className="text-xl font-bold">
+                      <h2
+                        className="
+  text-[1.55rem]
+  font-black
+  text-[#231F1B]
+  leading-tight
+"
+                      >
                         {company?.companyName}
                       </h2>
 
-                      <p className="text-slate-500 mt-1">{company?.role}</p>
+                      <p
+                        className="
+  text-[#6F655B]
+  mt-2
+  text-lg
+  font-medium
+"
+                      >
+                        {company?.role}
+                      </p>
                     </div>
 
                     <span
-                      className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
+                      className={`px-4 py-2 rounded-full text-sm font-semibold h-fit ${getStatusColor(
                         application.status,
                       )}`}
                     >
@@ -160,7 +314,7 @@ const ApplicationsPage = () => {
                     </span>
                   </div>
 
-                  <div className="mt-5 space-y-3 text-sm">
+                  <div className="mt-6 space-y-3 text-[#5F574E]">
                     <p>
                       <strong>Package:</strong> {company?.package} LPA
                     </p>
@@ -170,25 +324,26 @@ const ApplicationsPage = () => {
                     </p>
 
                     <p>
-                      <strong>Applied On:</strong>{" "}
+                      <strong>Applied:</strong>{" "}
                       {new Date(application.createdAt).toLocaleDateString()}
                     </p>
                   </div>
 
-                  {/* Timeline feel */}
-                  <div className="mt-5 border-t pt-4">
-                    <p className="text-sm text-slate-500">Current Stage</p>
+                  {/* Timeline */}
+                  <div
+                    className="
+                      mt-6
+                      rounded-[1.5rem]
+                      bg-[#F3EBE0]
+                      border
+                      border-[#E4D8CA]
+                      p-5
+                    "
+                  >
+                    <p className="text-sm text-[#7A7064]">Current Stage</p>
 
-                    <h3 className="text-lg font-semibold mt-1">
-                      {application.status === "oa"
-                        ? "Online Assessment"
-                        : application.status === "interview"
-                          ? "Interview Round"
-                          : application.status === "selected"
-                            ? "Selected 🎉"
-                            : application.status === "rejected"
-                              ? "Rejected"
-                              : "Application Submitted"}
+                    <h3 className="text-lg font-bold text-[#231F1B] mt-2">
+                      {getStageText(application.status)}
                     </h3>
                   </div>
                 </div>
