@@ -118,111 +118,284 @@ const AdminStudentsPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Students</h1>
-
-          <p className="text-slate-500 mt-1">
-            Manage student profiles & placements
-          </p>
-        </div>
+      <div
+        className="
+  bg-[#FBF7F1]
+  border
+  border-[#DED3C6]
+  rounded-[2rem]
+  p-5
+"
+      >
+        <p
+          className="
+    text-sm
+    uppercase
+    tracking-[0.14em]
+    text-[#9A876F]
+    font-semibold
+    mb-3
+  "
+        >
+          Search Students
+        </p>
 
         <input
           type="text"
           placeholder="Search by name, scholar ID or branch..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full border rounded-2xl p-4"
+          className="
+    w-full
+    rounded-[1.2rem]
+    border
+    border-[#DDD1C3]
+    bg-[#F8F3EC]
+    px-5
+    py-4
+    outline-none
+    text-[#231F1B]
+    placeholder:text-[#9A8E81]
+    focus:border-[#C9A784]
+    transition-all
+  "
         />
+      </div>
 
-        {loading ? (
-          <div className="bg-white border rounded-3xl p-10 text-center">
-            Loading...
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredStudents.map((student) => (
-              <div
-                key={student._id}
-                className="bg-white border rounded-3xl p-6 shadow-sm"
-              >
-                <div className="flex justify-between">
-                  <div>
-                    <h2 className="text-xl font-bold">{student.name}</h2>
+      {loading ? (
+        <div
+          className="
+    bg-[#FBF7F1]
+    border
+    border-[#DED3C6]
+    rounded-[2rem]
+    p-10
+    text-center
+  "
+        >
+          Loading...
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filteredStudents.map((student) => (
+            <div
+              key={student._id}
+              className="
+          bg-[#FBF7F1]
+          border
+          border-[#DED3C6]
+          rounded-[2rem]
+          p-6
+          transition-all
+          hover:shadow-sm
+        "
+            >
+              {/* Header */}
+              <div className="flex justify-between items-start gap-4">
+                <div>
+                  <h2
+                    className="
+                text-[1.55rem]
+                font-black
+                text-[#231F1B]
+                leading-tight
+              "
+                  >
+                    {student.name}
+                  </h2>
 
-                    <p className="text-slate-500">{student.email}</p>
-                  </div>
-
-                  <span className="bg-slate-100 px-4 py-2 rounded-full text-sm">
-                    {student.isPlaced ? "Placed" : "Unplaced"}
-                  </span>
+                  <p
+                    className="
+                text-[#746B60]
+                mt-1
+              "
+                  >
+                    {student.email}
+                  </p>
                 </div>
 
-                {editingId === student._id ? (
-                  <div className="grid md:grid-cols-2 gap-4 mt-5">
-                    <input
-                      placeholder="Scholar ID"
-                      value={editData.scholarId}
-                      onChange={(e) =>
-                        setEditData({
-                          ...editData,
-                          scholarId: e.target.value,
-                        })
-                      }
-                      className="border rounded-xl p-3"
-                    />
+                <span
+                  className={`px-5 py-2 rounded-full text-sm font-medium ${
+                    student.isPlaced
+                      ? "bg-green-100 text-green-700"
+                      : "bg-[#EFE7DA] text-[#746B60]"
+                  }`}
+                >
+                  {student.isPlaced ? "Placed" : "Unplaced"}
+                </span>
+              </div>
 
-                    <input
-                      placeholder="Branch"
-                      value={editData.branch}
-                      onChange={(e) =>
-                        setEditData({
-                          ...editData,
-                          branch: e.target.value,
-                        })
-                      }
-                      className="border rounded-xl p-3"
-                    />
+              {/* Student Info */}
+              <div
+                className="
+            grid
+            md:grid-cols-4
+            gap-4
+            mt-6
+            bg-[#F4ECE2]
+            border
+            border-[#E2D5C6]
+            rounded-[1.5rem]
+            p-4
+          "
+              >
+                <div>
+                  <p className="text-sm text-[#7A7166]">Scholar ID</p>
 
-                    <select
-                      value={editData.isPlaced ? "yes" : "no"}
-                      onChange={(e) =>
-                        setEditData({
-                          ...editData,
-                          isPlaced: e.target.value === "yes",
-                        })
-                      }
-                      className="border rounded-xl p-3"
-                    >
-                      <option value="no">Unplaced</option>
+                  <h3 className="font-semibold text-[#231F1B] mt-1">
+                    {student.scholarId || "N/A"}
+                  </h3>
+                </div>
 
-                      <option value="yes">Placed</option>
-                    </select>
+                <div>
+                  <p className="text-sm text-[#7A7166]">Branch</p>
 
-                    {editData.isPlaced && (
-                      <div className="md:col-span-2 space-y-3">
-                        <input
-                          type="text"
-                          placeholder="Search company..."
-                          value={companySearch}
-                          onChange={(e) => setCompanySearch(e.target.value)}
-                          className="border rounded-xl p-3 w-full"
-                        />
+                  <h3 className="font-semibold text-[#231F1B] mt-1">
+                    {student.branch || "N/A"}
+                  </h3>
+                </div>
 
-                        {companySearch && filteredCompanies.length > 0 && (
-                          <div className="border rounded-xl bg-white max-h-40 overflow-y-auto">
+                <div>
+                  <p className="text-sm text-[#7A7166]">CGPA</p>
+
+                  <h3 className="font-semibold text-[#231F1B] mt-1">
+                    {student.cgpa ?? "N/A"}
+                  </h3>
+                </div>
+
+                <div>
+                  <p className="text-sm text-[#7A7166]">Backlogs</p>
+
+                  <h3 className="font-semibold text-[#231F1B] mt-1">
+                    {student.backlogs ?? 0}
+                  </h3>
+                </div>
+              </div>
+
+              {/* Edit Mode */}
+              {editingId === student._id ? (
+                <div className="grid md:grid-cols-2 gap-4 mt-6">
+                  <input
+                    placeholder="Scholar ID"
+                    value={editData.scholarId}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        scholarId: e.target.value,
+                      })
+                    }
+                    className="
+                rounded-[1rem]
+                border
+                border-[#DDD1C3]
+                bg-[#F8F3EC]
+                px-4
+                py-3
+                outline-none
+              "
+                  />
+
+                  <input
+                    placeholder="Branch"
+                    value={editData.branch}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        branch: e.target.value,
+                      })
+                    }
+                    className="
+                rounded-[1rem]
+                border
+                border-[#DDD1C3]
+                bg-[#F8F3EC]
+                px-4
+                py-3
+                outline-none
+              "
+                  />
+
+                  <select
+                    value={editData.isPlaced ? "yes" : "no"}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        isPlaced: e.target.value === "yes",
+                      })
+                    }
+                    className="
+                rounded-[1rem]
+                border
+                border-[#DDD1C3]
+                bg-[#F8F3EC]
+                px-4
+                py-3
+                outline-none
+              "
+                  >
+                    <option value="no">Unplaced</option>
+
+                    <option value="yes">Placed</option>
+                  </select>
+
+                  {editData.isPlaced && (
+                    <div className="md:col-span-2 space-y-3">
+                      <input
+                        type="text"
+                        placeholder="Search company..."
+                        value={companySearch}
+                        onChange={(e) => setCompanySearch(e.target.value)}
+                        className="
+                    w-full
+                    rounded-[1rem]
+                    border
+                    border-[#DDD1C3]
+                    bg-[#F8F3EC]
+                    px-4
+                    py-3
+                    outline-none
+                  "
+                      />
+
+                      {companySearch &&
+                        filteredCompanies.length > 0 &&
+                        companySearch !== editData.placedCompany && (
+                          <div
+                            className="
+                        border
+                        border-[#DDD1C3]
+                        rounded-[1.2rem]
+                        bg-[#FBF7F1]
+                        max-h-48
+                        overflow-y-auto
+                      "
+                          >
                             {filteredCompanies.map((company) => (
                               <button
                                 key={company._id}
                                 onClick={() => handleCompanySelect(company)}
-                                className="w-full text-left px-4 py-3 hover:bg-slate-100"
+                                className="
+                              w-full
+                              text-left
+                              px-4
+                              py-4
+                              hover:bg-[#F4ECE2]
+                              transition-all
+                            "
                               >
-                                {company.companyName} — {company.role}
+                                <p className="font-semibold text-[#231F1B]">
+                                  {company.companyName}
+                                </p>
+
+                                <p className="text-sm text-[#746B60]">
+                                  {company.role}
+                                </p>
                               </button>
                             ))}
                           </div>
                         )}
 
+                      <div className="grid md:grid-cols-2 gap-4">
                         <input
                           value={editData.placedRole}
                           onChange={(e) =>
@@ -232,7 +405,14 @@ const AdminStudentsPage = () => {
                             })
                           }
                           placeholder="Role"
-                          className="border rounded-xl p-3 w-full"
+                          className="
+                      rounded-[1rem]
+                      border
+                      border-[#DDD1C3]
+                      bg-[#F8F3EC]
+                      px-4
+                      py-3
+                    "
                         />
 
                         <input
@@ -244,31 +424,56 @@ const AdminStudentsPage = () => {
                             })
                           }
                           placeholder="CTC"
-                          className="border rounded-xl p-3 w-full"
+                          className="
+                      rounded-[1rem]
+                      border
+                      border-[#DDD1C3]
+                      bg-[#F8F3EC]
+                      px-4
+                      py-3
+                    "
                         />
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    <button
-                      onClick={() => handleSave(student._id)}
-                      className="bg-green-600 text-white rounded-xl py-3"
-                    >
-                      Save
-                    </button>
-                  </div>
-                ) : (
                   <button
-                    onClick={() => handleEdit(student)}
-                    className="mt-5 bg-slate-900 text-white px-6 py-3 rounded-xl"
+                    onClick={() => handleSave(student._id)}
+                    className="
+                bg-[#231F1B]
+                text-white
+                rounded-[1rem]
+                py-3
+                font-medium
+                hover:opacity-90
+                transition-all
+              "
                   >
-                    Edit Student
+                    Save Changes
                   </button>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleEdit(student)}
+                  className="
+              mt-6
+              bg-[#231F1B]
+              text-white
+              px-6
+              py-3
+              rounded-[1rem]
+              font-medium
+              hover:opacity-90
+              transition-all
+            "
+                >
+                  Edit Student
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </DashboardLayout>
   );
 };

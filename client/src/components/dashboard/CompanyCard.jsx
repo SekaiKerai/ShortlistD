@@ -6,6 +6,8 @@ import {
   IndianRupee,
   BadgeCheck,
   TriangleAlert,
+  FileText,
+  MessageCircle,
 } from "lucide-react";
 
 const CompanyCard = ({ company }) => {
@@ -15,18 +17,48 @@ const CompanyCard = ({ company }) => {
 
   const timeLeft = deadline - now;
 
-  const daysLeft = Math.max(Math.ceil(timeLeft / (1000 * 60 * 60 * 24)), 0);
+  const totalMinutes = Math.max(Math.floor(timeLeft / (1000 * 60)), 0);
+
+  const daysLeft = Math.floor(totalMinutes / (60 * 24));
+
+  const hoursLeft = Math.floor((totalMinutes % (60 * 24)) / 60);
+
+  const minutesLeft = totalMinutes % 60;
 
   const getDeadlineColor = () => {
-    if (daysLeft <= 2) {
+    if (timeLeft <= 0) {
       return "text-red-600";
     }
 
-    if (daysLeft <= 5) {
+    if (daysLeft === 0 && hoursLeft <= 6) {
+      return "text-red-600";
+    }
+
+    if (daysLeft <= 2) {
       return "text-[#B67542]";
     }
 
     return "text-[#6B645B]";
+  };
+
+  const getTimeText = () => {
+    if (timeLeft <= 0) {
+      return "Deadline closed";
+    }
+
+    if (daysLeft >= 1) {
+      return `${daysLeft} day${daysLeft !== 1 ? "s" : ""} ${
+        hoursLeft > 0 ? `${hoursLeft} hr${hoursLeft !== 1 ? "s" : ""}` : ""
+      } left`;
+    }
+
+    if (hoursLeft >= 1) {
+      return `${hoursLeft} hr${hoursLeft !== 1 ? "s" : ""} ${minutesLeft} min${
+        minutesLeft !== 1 ? "s" : ""
+      } left`;
+    }
+
+    return `${minutesLeft} min${minutesLeft !== 1 ? "s" : ""} left`;
   };
 
   const handleApply = async () => {
@@ -65,22 +97,22 @@ const CompanyCard = ({ company }) => {
         <div>
           <h2
             className="
-  text-[1.6rem]
-  font-black
-  text-[#231F1B]
-  leading-tight
-"
+            text-[1.6rem]
+            font-black
+            text-[#231F1B]
+            leading-tight
+          "
           >
             {company.companyName}
           </h2>
 
           <p
             className="
-  text-[#6F655B]
-  mt-2
-  text-lg
-  font-medium
-"
+            text-[#6F655B]
+            mt-2
+            text-lg
+            font-medium
+          "
           >
             {company.role}
           </p>
@@ -109,6 +141,7 @@ const CompanyCard = ({ company }) => {
 
           <h3 className="text-[2.2rem] font-black text-[#231F1B]">
             {company.package}
+
             <span className="text-xl font-bold ml-1">LPA</span>
           </h3>
         </div>
@@ -138,13 +171,109 @@ const CompanyCard = ({ company }) => {
         >
           <Clock3 size={18} />
 
-          <span>
-            {daysLeft > 0
-              ? `${daysLeft} day${daysLeft !== 1 ? "s" : ""} left`
-              : "Deadline closed"}
-          </span>
+          <span>{getTimeText()}</span>
         </div>
       </div>
+
+      {/* Description */}
+      {company.description && (
+        <div className="mt-6">
+          <h3
+            className="
+            text-sm
+            uppercase
+            tracking-[0.12em]
+            text-[#8A7B6A]
+            font-semibold
+            mb-3
+          "
+          >
+            About Role
+          </h3>
+
+          <div
+            className="
+            bg-[#F4ECE2]
+            border
+            border-[#E1D5C8]
+            rounded-[1.4rem]
+            p-4
+          "
+          >
+            <p className="text-sm text-[#5F574E] leading-relaxed">
+              {company.description}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Resources */}
+      {(company.jobDescriptionLink || company.whatsappGroupLink) && (
+        <div className="mt-6">
+          <h3
+            className="
+            text-sm
+            uppercase
+            tracking-[0.12em]
+            text-[#8A7B6A]
+            font-semibold
+            mb-3
+          "
+          >
+            Resources
+          </h3>
+
+          <div className="flex flex-wrap gap-3">
+            {company.jobDescriptionLink && (
+              <a
+                href={company.jobDescriptionLink}
+                target="_blank"
+                rel="noreferrer"
+                className="
+                flex
+                items-center
+                gap-2
+                border
+                border-[#D7CBBB]
+                bg-[#F4ECE2]
+                text-[#231F1B]
+                px-4
+                py-3
+                rounded-[1.2rem]
+                text-sm
+                font-medium
+              "
+              >
+                <FileText size={18} />
+                Job Description
+              </a>
+            )}
+
+            {company.whatsappGroupLink && (
+              <a
+                href={company.whatsappGroupLink}
+                target="_blank"
+                rel="noreferrer"
+                className="
+                flex
+                items-center
+                gap-2
+                bg-[#231F1B]
+                text-white
+                px-4
+                py-3
+                rounded-[1.2rem]
+                text-sm
+                font-medium
+              "
+              >
+                <MessageCircle size={18} />
+                Join Group
+              </a>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Eligibility */}
       <div className="mt-6">
@@ -207,7 +336,6 @@ const CompanyCard = ({ company }) => {
               bg-[#231F1B]
               text-[#F7F2EA]
               hover:opacity-90
-              hover:scale-[1.01]
             `
               : `
               bg-[#E7DDD0]

@@ -5,6 +5,7 @@ const {
   getCompanies,
   getEligibleStudents,
   exportEligibleStudents,
+  updateCompany,
 } = require("../controllers/companyController");
 
 const { protect, authorizeRoles } = require("../middleware/authMiddleware");
@@ -14,6 +15,8 @@ const router = express.Router();
 router.post("/", protect, authorizeRoles("admin"), createCompany);
 
 router.get("/", protect, getCompanies);
+
+router.put("/:companyId", protect, authorizeRoles("admin"), updateCompany);
 
 router.get(
   "/:companyId/eligible-students",

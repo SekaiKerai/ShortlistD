@@ -106,7 +106,13 @@ const ManageCompaniesPage = () => {
 
       fetchCompanies();
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to update company");
+      console.log(error.response?.data);
+
+      alert(
+        error.response?.data?.message ||
+          JSON.stringify(error.response?.data) ||
+          "Failed to update company",
+      );
     }
   };
 

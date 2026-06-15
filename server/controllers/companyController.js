@@ -112,6 +112,8 @@ const getEligibleStudents = async (req, res) => {
     return res.status(200).json({
       success: true,
 
+      company,
+
       totalEligible: eligibleStudents.length,
 
       totalApplied: applications.length,
