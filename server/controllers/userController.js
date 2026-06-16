@@ -46,6 +46,36 @@ const completeProfile = async (req, res) => {
   }
 };
 
+const deleteIncompleteProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const incompleteProfile =
+      !user.scholarId || !user.branch || !user.graduationYear;
+
+    if (incompleteProfile) {
+      await User.findByIdAndDelete(user._id);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Cleanup complete",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // Admin → Get all students
 const getAllStudents = async (req, res) => {
   try {
@@ -105,6 +135,7 @@ const updateStudentByAdmin = async (req, res) => {
 
 module.exports = {
   completeProfile,
+  deleteIncompleteProfile,
   getAllStudents,
   updateStudentByAdmin,
 };
