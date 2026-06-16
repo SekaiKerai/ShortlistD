@@ -59,7 +59,6 @@ const googleLogin = async (req, res) => {
         email: normalizedEmail,
         profilePicture: picture,
         role: isAdmin ? "admin" : "student",
-        scholarId: isAdmin ? undefined : null,
       });
     } else {
       // Fix old users missing googleId

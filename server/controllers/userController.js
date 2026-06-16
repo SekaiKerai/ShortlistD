@@ -2,7 +2,7 @@ const User = require("../models/User");
 
 const completeProfile = async (req, res) => {
   try {
-    const { scholarId, cgpa, backlogs } = req.body;
+    const { scholarId, branch, graduationYear, cgpa, backlogs } = req.body;
 
     const user = await User.findById(req.user._id);
 
@@ -13,7 +13,19 @@ const completeProfile = async (req, res) => {
       });
     }
 
+    // Prevent overwriting once set
+    if (user.scholarId) {
+      return res.status(400).json({
+        success: false,
+        message: "Profile already completed",
+      });
+    }
+
     user.scholarId = scholarId;
+
+    user.branch = branch;
+
+    user.graduationYear = graduationYear;
 
     user.cgpa = cgpa;
 
