@@ -134,7 +134,9 @@ const handleSwitchAccount = async () => {
                 hover:text-[#231F1B]
               "
           >
-            {switchingAccount ? "Switching account..." : "Use a different account"}
+            {switchingAccount
+              ? "Switching account..."
+              : "Use a different account"}
           </button>
         </div>
 
@@ -208,6 +210,7 @@ const handleSwitchAccount = async () => {
                 min="0"
                 max="10"
                 step="0.01"
+                placeholder="8.50"
                 value={cgpa}
                 onChange={(e) => setCgpa(e.target.value)}
                 className="w-full mt-2 border border-[#DDD1C3] rounded-[1.2rem] px-5 py-4 bg-white"
