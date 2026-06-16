@@ -93,6 +93,7 @@ const userSchema = new mongoose.Schema(
 
     scholarId: {
       type: String,
+      unique: true,
       sparse: true,
     },
 
@@ -180,7 +181,7 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    
+
     placedRole: {
       type: String,
       default: "",
