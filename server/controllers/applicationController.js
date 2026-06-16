@@ -57,9 +57,23 @@ const applyToCompany = async (req, res) => {
     });
 
     if (missingFields.length > 0) {
+      const fieldLabels = {
+        resumeDriveLink: "Resume",
+        github: "GitHub",
+        linkedin: "LinkedIn",
+        skills: "Skills",
+        cgpa: "CGPA",
+        class10Percentage: "Class 10 %",
+        class12Percentage: "Class 12 %",
+      };
+
+      const readableFields = missingFields.map(
+        (field) => fieldLabels[field] || field,
+      );
+
       return res.status(400).json({
         success: false,
-        message: `Complete required profile fields: ${missingFields.join(
+        message: `Complete profile before applying.\nMissing: ${readableFields.join(
           ", ",
         )}`,
       });

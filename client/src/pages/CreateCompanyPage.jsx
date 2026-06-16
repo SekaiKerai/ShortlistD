@@ -7,6 +7,37 @@ const branches = ["CE", "CSE", "ECE", "EE", "EIE", "ME"];
 
 const graduationYears = [2027, 2028, 2029];
 
+const profileFieldOptions = [
+  {
+    label: "Resume",
+    value: "resumeDriveLink",
+  },
+  {
+    label: "GitHub",
+    value: "github",
+  },
+  {
+    label: "LinkedIn",
+    value: "linkedin",
+  },
+  {
+    label: "Skills",
+    value: "skills",
+  },
+  {
+    label: "CGPA",
+    value: "cgpa",
+  },
+  {
+    label: "Class 10 %",
+    value: "class10Percentage",
+  },
+  {
+    label: "Class 12 %",
+    value: "class12Percentage",
+  },
+];
+
 const inputStyle =
   "w-full rounded-[1.35rem] border border-[#DDD1C3] bg-[#F8F3EC] px-5 py-4 outline-none focus:border-[#C9A784] transition-all";
 
@@ -52,6 +83,15 @@ const CreateCompanyPage = () => {
       eligibleGraduationYears: formData.eligibleGraduationYears.includes(year)
         ? formData.eligibleGraduationYears.filter((y) => y !== year)
         : [...formData.eligibleGraduationYears, year],
+    });
+  };
+
+  const toggleProfileField = (field) => {
+    setFormData({
+      ...formData,
+      requiredProfileFields: formData.requiredProfileFields.includes(field)
+        ? formData.requiredProfileFields.filter((f) => f !== field)
+        : [...formData.requiredProfileFields, field],
     });
   };
 
@@ -423,6 +463,88 @@ const CreateCompanyPage = () => {
             </div>
           </section>
 
+          {/* Required Student Profile */}
+          <section>
+            <h2 className="text-2xl font-black text-[#231F1B] mb-5">
+              Required Student Profile
+            </h2>
+
+            <p className="text-[#746B60] mb-5">
+              Students must complete these details before applying.
+            </p>
+
+            {/* Selected */}
+            {formData.requiredProfileFields.length > 0 && (
+              <div className="flex flex-wrap gap-3 mb-5">
+                {formData.requiredProfileFields.map((field) => {
+                  const option = profileFieldOptions.find(
+                    (item) => item.value === field,
+                  );
+
+                  return (
+                    <div
+                      key={field}
+                      className="
+              flex
+              items-center
+              gap-3
+              bg-[#231F1B]
+              text-white
+              px-5
+              py-3
+              rounded-full
+            "
+                    >
+                      <span>{option?.label}</span>
+
+                      <button
+                        type="button"
+                        onClick={() => toggleProfileField(field)}
+                        className="
+                w-7
+                h-7
+                rounded-full
+                bg-white/20
+              "
+                      >
+                        ×
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Available */}
+            <div className="flex flex-wrap gap-3">
+              {profileFieldOptions
+                .filter(
+                  (item) =>
+                    !formData.requiredProfileFields.includes(item.value),
+                )
+                .map((item) => (
+                  <button
+                    key={item.value}
+                    type="button"
+                    onClick={() => toggleProfileField(item.value)}
+                    className="
+            px-5
+            py-3
+            rounded-full
+            border
+            border-[#DDD1C3]
+            bg-[#F4ECE2]
+            hover:bg-[#ECE1D3]
+            transition-all
+          "
+                  >
+                    + {item.label}
+                  </button>
+                ))}
+            </div>
+          </section>
+
+          
           {/* Description */}
           <section>
             <h2 className="text-2xl font-black text-[#231F1B] mb-5">

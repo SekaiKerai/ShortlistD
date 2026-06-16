@@ -73,7 +73,9 @@ const CompanyCard = ({ company }) => {
 
       alert(response.data.message);
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to apply");
+      const message = error.response?.data?.message;
+
+      alert(message || "Failed to apply");
     }
   };
 
