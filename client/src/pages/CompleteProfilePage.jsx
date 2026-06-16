@@ -59,34 +59,37 @@ const CompleteProfilePage = () => {
     }
   };
 
-  const handleSwitchAccount = async () => {
-    try {
-      setSwitchingAccount(true);
+const handleSwitchAccount = async () => {
+  try {
+    setSwitchingAccount(true);
 
-      await axios.delete(
-        `${import.meta.env.VITE_API_BASE_URL}/user/cleanup-profile`,
-        {
-          withCredentials: true,
-        },
-      );
+    // cleanup incomplete profile
+    await axios.delete(
+      `${import.meta.env.VITE_API_BASE_URL}/user/cleanup-profile`,
+      {
+        withCredentials: true,
+      },
+    );
 
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,
-        {},
-        {
-          withCredentials: true,
-        },
-      );
+    // logout
+    await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,
+      {},
+      {
+        withCredentials: true,
+      },
+    );
 
-      navigate("/login", {
-        replace: true,
-      });
-    } catch (error) {
-      alert("Failed to switch account");
-    } finally {
-      setSwitchingAccount(false);
-    }
-  };
+    // hard redirect
+    window.location.href = "/login";
+  } catch (error) {
+    console.log(error);
+
+    alert("Failed to switch account");
+  } finally {
+    setSwitchingAccount(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#F4EFE7] flex justify-center items-center px-5 py-10">
@@ -131,7 +134,7 @@ const CompleteProfilePage = () => {
                 hover:text-[#231F1B]
               "
           >
-            {switchingAccount ? "Switching..." : "Use a different account"}
+            {switchingAccount ? "Switching account..." : "Use a different account"}
           </button>
         </div>
 
@@ -147,7 +150,7 @@ const CompleteProfilePage = () => {
               value={scholarId}
               onChange={(e) => setScholarId(e.target.value)}
               className="w-full mt-2 border border-[#DDD1C3] rounded-[1.2rem] px-5 py-4 bg-white"
-              placeholder="2211234"
+              placeholder="2312176"
             />
           </div>
 
