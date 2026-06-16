@@ -48,7 +48,11 @@ const completeProfile = async (req, res) => {
 
 const deleteIncompleteProfile = async (req, res) => {
   try {
+    console.log("DELETE PROFILE HIT");
+
     const user = await User.findById(req.user._id);
+
+    console.log("USER:", user?.email);
 
     if (!user) {
       return res.status(404).json({
@@ -60,8 +64,12 @@ const deleteIncompleteProfile = async (req, res) => {
     const incompleteProfile =
       !user.scholarId || !user.branch || !user.graduationYear;
 
+    console.log("INCOMPLETE:", incompleteProfile);
+
     if (incompleteProfile) {
       await User.findByIdAndDelete(user._id);
+
+      console.log("USER DELETED");
     }
 
     return res.status(200).json({
@@ -69,6 +77,8 @@ const deleteIncompleteProfile = async (req, res) => {
       message: "Cleanup complete",
     });
   } catch (error) {
+    console.error("DELETE ERROR:", error);
+
     return res.status(500).json({
       success: false,
       message: error.message,
