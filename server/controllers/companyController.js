@@ -8,6 +8,117 @@ const Application = require("../models/Application");
 
 const ExcelJS = require("exceljs");
 
+const ALLOWED_PROFILE_FIELDS = [
+  "name",
+  "email",
+  "scholarId",
+  "branch",
+  "graduationYear",
+  "cgpa",
+  "backlogs",
+  "class10Percentage",
+  "class12Percentage",
+  "resumeDriveLink",
+  "github",
+  "linkedin",
+  "skills",
+];
+
+const ALLOWED_BRANCHES = ["CE", "CSE", "ECE", "EE", "EIE", "ME"];
+const ALLOWED_OFFER_TYPES = ["6m+ppo", "6m+fte", "fte"];
+const ALLOWED_STATUSES = ["open", "closed"];
+
+const parseNumber = (value) => {
+  if (value === undefined || value === null || value === "") {
+    return value;
+  }
+
+  const parsed = Number(value);
+
+  return Number.isNaN(parsed) ? value : parsed;
+};
+
+const normalizeDate = (value) => {
+  if (!value) {
+    return value;
+  }
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime()) ? value : date;
+};
+
+const normalizeArray = (value) => {
+  if (!Array.isArray(value)) {
+    return value;
+  }
+
+  return value.filter(
+    (item) => item !== undefined && item !== null && item !== "",
+  );
+};
+
+const buildCompanyUpdatePayload = (body) => {
+  const payload = {};
+
+  [
+    "companyName",
+    "role",
+    "location",
+    "description",
+    "whatsappGroupLink",
+    "jobDescriptionLink",
+  ].forEach((field) => {
+    if (body[field] !== undefined) {
+      payload[field] = body[field];
+    }
+  });
+
+  if (body.package !== undefined) {
+    payload.package = parseNumber(body.package);
+  }
+
+  if (body.minimumCGPA !== undefined) {
+    payload.minimumCGPA = parseNumber(body.minimumCGPA);
+  }
+
+  if (body.allowedBacklogs !== undefined) {
+    payload.allowedBacklogs = parseNumber(body.allowedBacklogs);
+  }
+
+  if (body.offerType !== undefined) {
+    payload.offerType = body.offerType;
+  }
+
+  if (body.status !== undefined) {
+    payload.status = body.status;
+  }
+
+  if (body.drivePhase !== undefined) {
+    payload.drivePhase = body.drivePhase;
+  }
+
+  if (body.applicationDeadline !== undefined) {
+    payload.applicationDeadline = normalizeDate(body.applicationDeadline);
+  }
+
+  if (body.eligibleBranches !== undefined) {
+    payload.eligibleBranches = normalizeArray(body.eligibleBranches);
+  }
+
+  if (body.eligibleGraduationYears !== undefined) {
+    payload.eligibleGraduationYears = normalizeArray(
+      body.eligibleGraduationYears,
+    ).map((year) => parseNumber(year));
+  }
+
+  if (body.requiredProfileFields !== undefined) {
+    payload.requiredProfileFields = normalizeArray(body.requiredProfileFields);
+  }
+
+  return payload;
+};
+
 const createCompany = async (req, res) => {
   try {
     const company = await Company.create({
@@ -254,10 +365,56 @@ const updateCompany = async (req, res) => {
   try {
     const { companyId } = req.params;
 
+    const updatePayload = buildCompanyUpdatePayload(req.body);
+
+    if (
+      updatePayload.offerType !== undefined &&
+      !ALLOWED_OFFER_TYPES.includes(updatePayload.offerType)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid offer type",
+      });
+    }
+
+    if (
+      updatePayload.status !== undefined &&
+      !ALLOWED_STATUSES.includes(updatePayload.status)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid company status",
+      });
+    }
+
+    if (
+      Array.isArray(updatePayload.eligibleBranches) &&
+      updatePayload.eligibleBranches.some(
+        (branch) => !ALLOWED_BRANCHES.includes(branch),
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid eligible branch value",
+      });
+    }
+
+    if (
+      Array.isArray(updatePayload.requiredProfileFields) &&
+      updatePayload.requiredProfileFields.some(
+        (field) => !ALLOWED_PROFILE_FIELDS.includes(field),
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid required profile field value",
+      });
+    }
+
     const updatedCompany = await Company.findByIdAndUpdate(
       companyId,
       {
-        $set: req.body,
+        $set: updatePayload,
       },
       {
         new: true,
@@ -278,6 +435,17 @@ const updateCompany = async (req, res) => {
       company: updatedCompany,
     });
   } catch (error) {
+    if (
+      error.name === "ValidationError" ||
+      error.name === "CastError" ||
+      error.name === "MongoServerError"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
     return res.status(500).json({
       success: false,
       message: error.message,

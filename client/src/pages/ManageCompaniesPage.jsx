@@ -92,9 +92,22 @@ const ManageCompaniesPage = () => {
 
   const handleSave = async (companyId) => {
     try {
+      const normalizedEditData = {
+        ...editData,
+        minimumCGPA:
+          editData.minimumCGPA === "" ? "" : Number(editData.minimumCGPA),
+        allowedBacklogs:
+          editData.allowedBacklogs === ""
+            ? ""
+            : Number(editData.allowedBacklogs),
+        applicationDeadline: editData.applicationDeadline
+          ? new Date(editData.applicationDeadline).toISOString()
+          : "",
+      };
+
       await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/company/${companyId}`,
-        editData,
+        normalizedEditData,
         {
           withCredentials: true,
         },
