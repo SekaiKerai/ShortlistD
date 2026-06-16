@@ -11,7 +11,7 @@ const graduationYears = [2027, 2028, 2029];
 const CompleteProfilePage = () => {
   const navigate = useNavigate();
 
-  const { user, fetchCurrentUser } = useAuth();
+  const { user, fetchCurrentUser, logout } = useAuth();
 
   const [scholarId, setScholarId] = useState("");
 
@@ -59,37 +59,30 @@ const CompleteProfilePage = () => {
     }
   };
 
-const handleSwitchAccount = async () => {
-  try {
-    setSwitchingAccount(true);
+  const handleSwitchAccount = async () => {
+    try {
+      setSwitchingAccount(true);
 
-    // cleanup incomplete profile
-    await axios.delete(
-      `${import.meta.env.VITE_API_BASE_URL}/user/cleanup-profile`,
-      {
-        withCredentials: true,
-      },
-    );
+      // cleanup incomplete profile before removing the session
+      await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/user/cleanup-profile`,
+        {
+          withCredentials: true,
+        },
+      );
 
-    // logout
-    await axios.post(
-      `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,
-      {},
-      {
-        withCredentials: true,
-      },
-    );
+      await logout();
 
-    // hard redirect
-    window.location.href = "/login";
-  } catch (error) {
-    console.log(error);
+      // hard redirect
+      window.location.href = "/login";
+    } catch (error) {
+      console.log(error);
 
-    alert("Failed to switch account");
-  } finally {
-    setSwitchingAccount(false);
-  }
-};
+      alert("Failed to switch account");
+    } finally {
+      setSwitchingAccount(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F4EFE7] flex justify-center items-center px-5 py-10">

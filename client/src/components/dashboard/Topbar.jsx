@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,26 +16,14 @@ import { LogOut, ChevronDown } from "lucide-react";
 const Topbar = () => {
   const navigate = useNavigate();
 
-  const { user, setUser } = useAuth();
+  const { user, logout } = useAuth();
 
   const firstName = user?.name?.split(" ")[0];
 
   const handleLogout = async () => {
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,
-        {},
-        {
-          withCredentials: true,
-        },
-      );
+    await logout();
 
-      setUser(null);
-
-      navigate("/login");
-    } catch {
-      alert("Logout failed");
-    }
+    navigate("/login", { replace: true });
   };
 
   const hour = new Date().getHours();

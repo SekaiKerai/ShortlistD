@@ -8,6 +8,13 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const ADMIN_EMAILS = ["sekai.kerai@gmail.com"];
 
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  path: "/",
+};
+
 const googleLogin = async (req, res) => {
   try {
     const { credential } = req.body;
@@ -78,12 +85,7 @@ const googleLogin = async (req, res) => {
 
     // Production-safe cookie
     res.cookie("token", token, {
-      httpOnly: true,
-
-      secure: process.env.NODE_ENV === "production",
-
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-
+      ...COOKIE_OPTIONS,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -180,13 +182,7 @@ const updateProfile = async (req, res) => {
 };
 
 const logoutUser = (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-
-    secure: process.env.NODE_ENV === "production",
-
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  });
+  res.clearCookie("token", COOKIE_OPTIONS);
 
   return res.status(200).json({
     success: true,
